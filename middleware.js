@@ -1,0 +1,33 @@
+import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
+import { useEffect } from "react";
+
+export async function middleware(req) {
+  const { pathname, origin } = req.nextUrl;
+  const session = await getToken({
+    req,
+    secret: process.env.JWT_SECRET,
+    secureCookie: process.env.NODE_ENV === "production",
+  });
+
+  if (pathname.startsWith("/admin")) {
+    if (!session) return NextResponse.redirect(`http://localhost:3000/login`);
+    if (session.role !== "admin") return NextResponse.redirect(`${origin}`);
+  }
+  if (pathname.startsWith("/subadmin")) {
+    if (!session) return NextResponse.redirect(`http://localhost:3000/login`);
+    if (session.role !== "subadmin") return NextResponse.redirect(`${origin}`);
+  }
+  if (pathname.startsWith("/student")) {
+    if (!session) return NextResponse.redirect(`http://localhost:3000/login`);
+    if (session.role !== "student") return NextResponse.redirect(`${origin}`);
+  }
+  if (pathname.startsWith("/teacher")) {
+    if (!session) return NextResponse.redirect(`http://localhost:3000/login`);
+    if (session.role !== "teacher") return NextResponse.redirect(`${origin}`);
+  }
+  // if (pathname.startsWith("/campusfeed")) {
+  //   if (!session) return NextResponse.redirect(`http://localhost:3000/login`);
+  //   if (session.role !== "teacher") return NextResponse.redirect(`${origin}`);
+  // }
+}

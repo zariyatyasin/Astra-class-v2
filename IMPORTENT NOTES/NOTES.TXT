@@ -1,0 +1,27 @@
+NEED TO ADD .USE(AUTH)
+REMOVE ALL CONSOLE.LOG API
+
+fix the table and the error handler
+
+add loading add error when the data is loading.. IsLoading....
+Add requst when a student try tto add coruse when it's off
+
+sir same course ki BBA and CSE o hoi??
+
+
+
+
+
+# DATA BASE
+
+MONGODB_URL=mongodb+srv://zariyat:Afnan09876@cluster0.mop9hi5.mongodb.net/sudzar?retryWrites=true&w=majority
+
+#NEXT AUTH
+JWT_SECRET=howareyou
+
+NEXTAUTH_URL=http://localhost:3000
+
+ACTIVATION_TOKEN_SECRET=howareyou
+
+
+
