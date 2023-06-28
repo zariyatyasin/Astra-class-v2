@@ -1,299 +1,300 @@
-import AdminLayout from "@/components/SubAdmin/layout/AdminLayout";
-import { StudentCard } from "@/components/cards/StudentCard";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 
-const Index = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [role, setRole] = useState("teacher"); // Default role is teacher
-
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRole, setSelectedRole] = useState("all");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const dummyUsers = [
-    {
-      id: 1,
-      username: "john123",
-      password: "password123",
-      name: "John Doe",
-      email: "john.doe@example.com",
-      phone: "123-456-7890",
-      role: "teacher",
-    },
-    {
-      id: 2,
-      username: "jane456",
-      password: "password456",
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      phone: "987-654-3210",
-      role: "student",
-    },
-    {
-      id: 3,
-      username: "aniak",
-      password: "password456",
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      phone: "987-654-3210",
-      role: "student",
-    },
-    // Add more dummy users as needed
-  ];
-
-  useEffect(() => {
-    setUsers(dummyUsers);
-    setFilteredUsers(dummyUsers);
-    setSelectedRole("all"); // Set initial selected role to "all"
-    handleSearch(); // Apply initial search and role filters
-  }, []);
-
-  const fetchUsers = () => {
-    // Send GET request to fetch users
-    axios
-      .get("/api/users")
-      .then((res) => {
-        setUsers(res.data);
-        setFilteredUsers(res.data);
-        setSelectedUser(null); // Reset selected user
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+const CreateUserForm = ({
+  onSubmit,
+  onCancelEdit,
+  isEditing,
+  isModalOpen,
+  name,
+  email,
+  role,
+  setIsModalOpen,
+  username,
+  password,
+  handleNameChange,
+  handleRoleChange,
+  handleEmailChange,
+  handleUsernameChange,
+  handlePasswordChange,
+}) => {
+  const handleCancelEdit = () => {
+    onCancelEdit();
+    setIsModalOpen(false);
   };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Create user object
-    const user = {
-      username,
-      password,
-      name,
-      email,
-      phone,
-      role,
-    };
-
-    if (isEditing) {
-      // Send PUT request to update user
-      axios
-        .put(`/api/users/${selectedUser.id}`, user)
-        .then((res) => {
-          console.log(res.data);
-          // Handle successful update
-          // Reset form fields and editing state
-          setUsername("");
-          setPassword("");
-          setName("");
-          setEmail("");
-          setPhone("");
-          setRole("teacher");
-          setIsEditing(false);
-
-          // Fetch updated user list
-          fetchUsers();
-        })
-        .catch((error) => {
-          console.error(error);
-          // Handle error during update
-        });
-    } else {
-      // Send POST request to register user
-      axios
-        .post("/api/register", user)
-        .then((res) => {
-          console.log(res.data);
-          // Handle successful registration
-          // Reset form fields
-          setUsername("");
-          setPassword("");
-          setName("");
-          setEmail("");
-          setPhone("");
-          setRole("teacher");
-
-          // Fetch updated user list
-          fetchUsers();
-        })
-        .catch((error) => {
-          console.error(error);
-          // Handle error during registration
-        });
-    }
-  };
-  const handleSearch = () => {
-    const filtered = users.filter((user) => {
-      const searchFilter =
-        user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.phone.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const roleFilter = selectedRole === "all" || user.role === selectedRole;
-
-      return searchFilter && roleFilter;
-    });
-
-    setFilteredUsers(filtered);
-  };
-
-  const deleteUser = (userId) => {
-    // Send DELETE request to delete user
-    axios
-      .delete(`/api/users/${userId}`)
-      .then((res) => {
-        console.log(res.data);
-        // Handle successful deletion
-        // Fetch updated user list
-        fetchUsers();
-      })
-      .catch((error) => {
-        console.error(error);
-        // Handle error during deletion
-      });
-  };
-
-  const editUser = (user) => {
-    if (selectedUser && selectedUser.id === user.id) {
-      // Same user, reset form fields and editing state
-      setUsername("");
-      setPassword("");
-      setName("");
-      setEmail("");
-      setPhone("");
-      setRole("teacher");
-      setIsEditing(false);
-    } else {
-      setSelectedUser(user);
-      setUsername(user.username);
-      setPassword(user.password);
-      setName(user.name);
-      setEmail(user.email);
-      setPhone(user.phone);
-      setRole(user.role);
-      setIsEditing(true);
-    }
-  };
-
   return (
-    <AdminLayout>
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-semibold mb-4">
-          Subadmin User Registration
-        </h1>
-
-        {/* Registration Form */}
-        <form onSubmit={handleSubmit} className="mb-8">
-          <div className="mb-4">
-            <label className="block text-gray-700">Username:</label>
-            <input
-              type="text"
-              className="border border-gray-300 px-4 py-2 rounded w-full"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          {/* Add other form fields here */}
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded"
+    <div className="fixed inset-0 flex items-center overflow-scroll justify-center z-10">
+      <div
+        class={` ${
+          isModalOpen ? "fixed" : "hidden"
+        } inset-0 bg-gray-500 bg-opacity-75 transition-opacity`}
+        aria-hidden="true"
+        onClick={() => setIsModalOpen(false)}
+      ></div>
+      {/* <form onSubmit={onSubmit} className="mb-4 z-10">
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-2" htmlFor="name">
+            Name:
+          </label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={handleNameChange}
+            className="w-full border border-gray-300 rounded p-2"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-2" htmlFor="username">
+            Username:
+          </label>
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={handleUsernameChange}
+            className="w-full border border-gray-300 rounded p-2"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-2" htmlFor="password">
+            Password:
+          </label>
+          <input
+            id="password"
+            type="text"
+            value={password}
+            onChange={handlePasswordChange}
+            className="w-full border border-gray-300 rounded p-2"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-2" htmlFor="email">
+            Email:
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+            className="w-full border border-gray-300 rounded p-2"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-2" htmlFor="role">
+            Role:
+          </label>
+          <select
+            id="role"
+            value={role}
+            onChange={handleRoleChange}
+            className="w-full border border-gray-300 rounded p-2"
           >
-            {isEditing ? "Update" : "Register"}
-          </button>
-        </form>
-
-        {/* User Table */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">User List</h2>
-
-          {/* Search and Filter */}
-          <div className="flex items-center">
-            <input
-              type="text"
-              placeholder="Search"
-              className="border border-gray-300 px-4 py-2 rounded-md mr-2 focus:outline-none"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                handleSearch();
-              }}
-            />
-
-            <select
-              value={selectedRole}
-              onChange={(e) => {
-                setSelectedRole(e.target.value);
-                handleSearch();
-              }}
-              className="border border-gray-300 px-4 py-2 rounded-md focus:outline-none"
-            >
-              <option value="all">All</option>
-              <option value="teacher">Teacher</option>
-              <option value="student">Student</option>
-            </select>
-          </div>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
         </div>
 
-        {/* User Table */}
-        <table className="w-full border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border-b border-gray-300 px-4 py-2">Username</th>
-              <th className="border-b border-gray-300 px-4 py-2">Name</th>
-              <th className="border-b border-gray-300 px-4 py-2">Email</th>
-              <th className="border-b border-gray-300 px-4 py-2">Phone</th>
-              <th className="border-b border-gray-300 px-4 py-2">Role</th>
-              <th className="border-b border-gray-300 px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.id}>
-                <td className="border-b border-gray-300 px-4 py-2">
-                  {user.username}
-                </td>
-                <td className="border-b border-gray-300 px-4 py-2">
-                  {user.name}
-                </td>
-                <td className="border-b border-gray-300 px-4 py-2">
-                  {user.email}
-                </td>
-                <td className="border-b border-gray-300 px-4 py-2">
-                  {user.phone}
-                </td>
-                <td className="border-b border-gray-300 px-4 py-2">
-                  {user.role}
-                </td>
-                <td className="border-b border-gray-300 px-4 py-2">
-                  {/* Add update and delete buttons here */}
-                  <button
-                    onClick={() => editUser(user)}
-                    className="text-blue-500 hover:text-blue-600 mx-2"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteUser(user.id)}
-                    className="text-red-500 hover:text-red-600 mx-2"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          {isEditing ? "Update" : "Register"}
+        </button>
+        {isEditing && (
+          <button
+            type="button"
+            onClick={handleCancelEdit}
+            className="text-red-500 font-bold ml-2"
+          >
+            Cancel
+          </button>
+        )}
+      </form> */}
+
+      <div class="relative h-96 sm:h-[78vh]  inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-scroll shadow-xl transform transition-all sm:my-8 sm:align-middle sm:w-[860px] w-full sm:p-6">
+        <div class="sm:flex sm:items-start">
+          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"></div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <div class="mt-2">
+              <div className=" ">
+                <div>
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    Personal Information
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Use a permanent address where you can receive mail.
+                  </p>
+                </div>
+                <div className=" ">
+                  <section aria-labelledby="payment-details-heading">
+                    <form action="#" method="POST">
+                      <div className="shadow sm:rounded-md sm:overflow-hidden">
+                        <div className="bg-white py-6 px-4 sm:p-6">
+                          <div>
+                            <h2
+                              id="payment-details-heading"
+                              className="text-lg leading-6 font-medium text-gray-900"
+                            >
+                              Payment details
+                            </h2>
+                            <p className="mt-1 text-sm text-gray-500">
+                              Update your billing information. Please note that
+                              updating your location could affect your tax
+                              rates.
+                            </p>
+                          </div>
+
+                          <div className="mt-6 grid grid-cols-4 gap-6">
+                            <div className="col-span-4 sm:col-span-2">
+                              <label
+                                htmlFor="first-name"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                First name
+                              </label>
+                              <input
+                                type="text"
+                                name="first-name"
+                                id="first-name"
+                                autoComplete="cc-given-name"
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
+                              />
+                            </div>
+
+                            <div className="col-span-4 sm:col-span-2">
+                              <label
+                                htmlFor="last-name"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                Last name
+                              </label>
+                              <input
+                                type="text"
+                                name="last-name"
+                                id="last-name"
+                                autoComplete="cc-family-name"
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
+                              />
+                            </div>
+
+                            <div className="col-span-4 sm:col-span-2">
+                              <label
+                                htmlFor="email-address"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                Email address
+                              </label>
+                              <input
+                                type="text"
+                                name="email-address"
+                                id="email-address"
+                                autoComplete="email"
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
+                              />
+                            </div>
+
+                            <div className="col-span-4 sm:col-span-1">
+                              <label
+                                htmlFor="expiration-date"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                Expration date
+                              </label>
+                              <input
+                                type="text"
+                                name="expiration-date"
+                                id="expiration-date"
+                                autoComplete="cc-exp"
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
+                                placeholder="MM / YY"
+                              />
+                            </div>
+
+                            <div className="col-span-4 sm:col-span-1">
+                              <label
+                                htmlFor="security-code"
+                                className="flex items-center text-sm font-medium text-gray-700"
+                              >
+                                <span>Security code</span>
+                              </label>
+                              <input
+                                type="text"
+                                name="security-code"
+                                id="security-code"
+                                autoComplete="cc-csc"
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
+                              />
+                            </div>
+
+                            <div className="col-span-4 sm:col-span-2">
+                              <label
+                                htmlFor="country"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                Country
+                              </label>
+                              <select
+                                id="country"
+                                name="country"
+                                autoComplete="country-name"
+                                className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
+                              >
+                                <option>United States</option>
+                                <option>Canada</option>
+                                <option>Mexico</option>
+                              </select>
+                            </div>
+
+                            <div className="col-span-4 sm:col-span-2">
+                              <label
+                                htmlFor="postal-code"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                ZIP / Postal code
+                              </label>
+                              <input
+                                type="text"
+                                name="postal-code"
+                                id="postal-code"
+                                autoComplete="postal-code"
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-900 focus:border-gray-900 sm:text-sm"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                          <button
+                            type="submit"
+                            className="bg-gray-800 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-4 sticky top-0 sm:flex sm:flex-row-reverse">
+            <button
+              type="button"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm   px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Deactivate
+            </button>
+            <button
+              type="button"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       </div>
-    </AdminLayout>
+    </div>
   );
 };
 
-export default Index;
+export default CreateUserForm;

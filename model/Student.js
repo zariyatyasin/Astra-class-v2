@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: "Please enter the email",
+
       trim: true,
       unique: true,
     },
@@ -98,25 +98,7 @@ const userSchema = new mongoose.Schema(
         grade: {
           type: String,
         },
-        attendance: {
-          type: [
-            {
-              date: {
-                type: Date,
-                required: true,
-              },
-              present: {
-                type: Boolean,
-                default: false,
-              },
-              absent: {
-                type: Boolean,
-                default: false,
-              },
-            },
-          ],
-          default: [],
-        },
+
         avgAttendance: [],
         credits: {
           type: Number,
@@ -131,7 +113,25 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
-
+    attendance: {
+      type: [
+        {
+          date: {
+            type: Date,
+            required: true,
+          },
+          present: {
+            type: Boolean,
+            default: false,
+          },
+          absent: {
+            type: Boolean,
+            default: false,
+          },
+        },
+      ],
+      default: [],
+    },
     cgpa: {
       type: Number,
     },

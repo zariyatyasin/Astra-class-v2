@@ -19,13 +19,13 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: "Please enter the email",
+
       trim: true,
       unique: true,
     },
     role: {
       type: String,
-      enum: ["teacher", "student", "admin", "subadmin"],
+      enum: ["Teacher", "Student", "Admin", "Subadmin"],
       required: true,
     },
 

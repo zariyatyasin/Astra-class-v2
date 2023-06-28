@@ -10,24 +10,16 @@ const handler = nc();
 handler.post(async (req, res) => {
   try {
     await connectDb();
-    const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
+    const { username, password } = req.body;
+    console.log("this is", req.body);
+    if (!username || !password) {
       res.status(400).json({ message: "Please fill in all fields" });
       return;
     }
-    if (!validateEmail(email)) {
-      return res.status(400).json({
-        message: "Invaild email",
-      });
-    }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ username });
     if (user) {
       return res.status(400).json({ message: "User already exits" });
-    }
-    if (password.length < 6) {
-      return res.status(400).json({ message: "Passsword atlest 6" });
     }
 
     const cryptedPassword = await bcrypt.hash(password, 12);
@@ -38,12 +30,36 @@ handler.post(async (req, res) => {
     });
 
     const addedUser = await newUser.save();
-    console.log(addedUser._id.toString());
+
     const activation_token = createActivationToken({
       id: addedUser._id.toString(),
     });
     await disconnectDb();
     res.status(200).json({ message: "Register success" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+handler.delete(async (req, res) => {
+  try {
+    await connectDb();
+    const { userId } = req.body;
+
+    if (!userId) {
+      res.status(400).json({ message: "Please provide a userId" });
+      return;
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
+    // Perform delete operation
+    await User.findByIdAndDelete(userId);
+
+    await disconnectDb();
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

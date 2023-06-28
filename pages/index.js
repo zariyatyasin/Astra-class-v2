@@ -4,21 +4,17 @@ import { getSession } from "next-auth/react";
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-
+  console.log(session);
   if (!session) {
     return {
       redirect: {
         destination: "/login",
         permanent: false,
       },
-      redirect: {
-        destination: "/register",
-        permanent: false,
-      },
     };
   }
 
-  if (session.user.role === "admin") {
+  if (session.user.role === "Admin") {
     return {
       redirect: {
         destination: "/admin",
@@ -27,7 +23,7 @@ export async function getServerSideProps(context) {
     };
   }
 
-  if (session.user.role === "subadmin") {
+  if (session.user.role === "Subadmin") {
     return {
       redirect: {
         destination: "/subadmin",
@@ -36,7 +32,7 @@ export async function getServerSideProps(context) {
     };
   }
 
-  if (session.user.role === "student") {
+  if (session.user.role === "Student") {
     return {
       redirect: {
         destination: "/student",
@@ -45,7 +41,7 @@ export async function getServerSideProps(context) {
     };
   }
 
-  if (session.user.role === "teacher") {
+  if (session.user.role === "Teacher") {
     return {
       redirect: {
         destination: "/teacher",
