@@ -8,71 +8,11 @@ const CreateUserTable = ({
   handleDelete,
   indexOfFirstUser,
 }) => {
-  const plans = [
-    {
-      id: 1,
-      name: "Hobby",
-      memory: "4 GB RAM",
-      cpu: "4 CPUs",
-      storage: "128 GB SSD disk",
-      price: "$40",
-      isCurrent: false,
-    },
-    {
-      id: 2,
-      name: "Startup",
-      memory: "8 GB RAM",
-      cpu: "6 CPUs",
-      storage: "256 GB SSD disk",
-      price: "$80",
-      isCurrent: true,
-    },
-    // More plans...
-  ];
-
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
   return (
     <>
-      {/* {users.length > 0 ? (
-        <table className="w-full">
-          <thead>
-            <tr>
-              <th className="border px-4 py-2">Name</th>
-              <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Role</th>
-              <th className="border px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user, index) => (
-              <tr key={index}>
-                <td className="border px-4 py-2">{user.name}</td>
-                <td className="border px-4 py-2">{user.email}</td>
-                <td className="border px-4 py-2">{user.role}</td>
-                <td className="border px-4 py-2">
-                  <button
-                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mr-2"
-                    onClick={() => handleEditButtonClick(index)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                    onClick={() => handleDelete(indexOfFirstUser + index)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No users found.</p>
-      )} */}
-
       <div className=" min-w-full divide-y border  rounded-lg overflow-scroll divide-gray-300">
         <div className="w-full   ">
           <div className=" bg-white ">
@@ -101,6 +41,7 @@ const CreateUserTable = ({
               <tbody>
                 {users.map((user, index) => (
                   <tr className="" key={index}>
+                    {console.log("this si user", user._id)}
                     <td className="px-6 py-4">
                       <div className="flex a ">
                         <img

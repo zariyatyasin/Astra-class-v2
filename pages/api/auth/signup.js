@@ -1,5 +1,7 @@
 import { connectDb, disconnectDb } from "@/utils/db";
 import bcrypt from "bcrypt";
+import { getToken } from "next-auth/jwt";
+
 import { validateEmail } from "@/utils/validation";
 import nc from "next-connect";
 import { createActivationToken } from "@/utils/tokens";
@@ -11,7 +13,7 @@ handler.post(async (req, res) => {
   try {
     await connectDb();
     const { username, password } = req.body;
-    console.log("this is", req.body);
+
     if (!username || !password) {
       res.status(400).json({ message: "Please fill in all fields" });
       return;
@@ -42,6 +44,12 @@ handler.post(async (req, res) => {
 });
 handler.delete(async (req, res) => {
   try {
+    const session = await getToken({
+      req,
+      secret: process.env.JWT_SECRET,
+      secureCookie: process.env.NODE_ENV === "production",
+    });
+
     await connectDb();
     const { userId } = req.body;
 
@@ -49,7 +57,10 @@ handler.delete(async (req, res) => {
       res.status(400).json({ message: "Please provide a userId" });
       return;
     }
-
+    if (userId === session.sub) {
+      console.log(userId, session.sub);
+      return res.status(400).json({ message: "You cannot delete yourself" });
+    }
     const user = await User.findById(userId);
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });

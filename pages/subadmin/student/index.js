@@ -1,51 +1,92 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import AddIcon from "@mui/icons-material/Add";
+
 import AdminLayout from "@/components/SubAdmin/layout/AdminLayout";
-import CreateUserTable from "@/components/Table/CreateUserTable";
-import CreateUserForm from "@/components/form/CreateUserForm";
+import PersonalForm from "@/components/form/PersonalForm";
 
-import { connectDb } from "@/utils/db";
-import User from "@/model/User";
-
+import {
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import AcademicForm from "@/components/forms/AcademicForm";
+import FamilyInfoForm from "@/components/forms/FamilyInfoForm";
+import axios from "axios";
 const Index = ({ user }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState(" ");
-  const handleRoleChange = (e) => {
-    setRole(e.target.value);
-  };
-  console.log(role);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [users, setUsers] = useState([...user]);
   const [username, setUsername] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterRole, setFilterRole] = useState("all");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [password, setPassword] = useState("");
+  const initialFormData = {
+    lastName: "",
+    username,
+    password,
+    name: "",
+    email: "",
+    role: "",
+    gender: "",
+    roll: "",
+    cellPhone: "",
+    birthDate: "",
+    postalCode: "",
+    city: "",
+    street: "",
+    examType: "",
+    institutions: "",
+    fieldOfStudy: "",
+    qualificationDate: "",
+    gpa: "",
+    fatherFullName: "",
+    fatherOccupation: "",
+    fatherPhone: "",
+    motherFullName: "",
+    motherOccupation: "",
+    motherPhone: "",
+  };
 
-  const usersPerPage = 5;
+  const initialErrors = {
+    name: "",
+    lastName: "",
+    emailAddress: "",
+  };
 
-  useEffect(() => {
-    console.log(role);
-  }, [role]);
-  const registerUser = async () => {
+  const [formData, setFormData] = useState(initialFormData);
+  const [errors, setErrors] = useState(initialErrors);
+
+  const resetForm = () => {
+    setFormData(initialFormData);
+    setErrors(initialErrors);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { name, lastName } = formData;
+    const errors = {};
+    if (!name) {
+      errors.name = "First name is required";
+    }
+
+    if (!lastName) {
+      errors.lastName = "Last name is required";
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:3000/api/auth/signup",
         {
-          name: name,
-
+          name: formData.name,
           username: username,
           password: password,
-          role: role,
-          email: email,
+          role: formData.role,
+          email: formData.email,
         }
       );
-      if (response.ok) {
-        setUsers([...users, response.data]);
+
+      if (response.status === 200) {
+        console.log(response.data);
+        resetForm();
+      } else {
+        console.error("Registration failed");
+        return;
       }
 
       // Handle successful registration
@@ -53,269 +94,243 @@ const Index = ({ user }) => {
       console.error(error.response.data.message);
       // Handle error during registration
     }
-  };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleNameChange = (e) => {
-    const enteredName = e.target.value;
-    setName(enteredName);
-
-    const timestamp = Date.now().toString();
-    const randomDigits = Math.floor(Math.random() * 10000);
-    const paddedRandomDigits = randomDigits.toString().padStart(4, "0");
-    const generatedUsername = `${enteredName.replace(
-      /\s+/g,
-      ""
-    )}${paddedRandomDigits}`;
-
-    setUsername(generatedUsername);
-    setPassword(generatedUsername);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    registerUser();
-    const newUser = {
-      name,
-      username,
-      email,
-      role,
-      password,
-    };
-
-    if (isEditing) {
-      const updatedUsers = [...users];
-      updatedUsers[selectedUser] = newUser;
-      setUsers(updatedUsers);
-      setSelectedUser(null);
-      setIsEditing(false);
-    } else {
-      setUsers([...users, newUser]);
-    }
-
-    setName("");
-    setEmail("");
-    setRole("");
-    setUsername("");
-    setPassword("");
-    setIsModalOpen(false);
-  };
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleFilter = (e) => {
-    setFilterRole(e.target.value);
-  };
-
-  const handleDelete = async (index, userId) => {
-    // Show confirmation dialog before deleting the user
-    const shouldDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-
-    if (shouldDelete) {
-      try {
-        if (userId === user._id) {
-          console.error("You cannot delete yourself.");
-          return;
-        }
-        await axios.delete("http://localhost:3000/api/auth/signup/", {
-          data: {
-            userId: userId,
-          },
-        });
-        const updatedUsers = [...users];
-        updatedUsers.splice(index, 1);
-        setUsers(updatedUsers);
-        // Handle successful deletion
-      } catch (error) {
-        console.error(error.response?.data?.message);
-        // Handle error during deletion
-      }
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      return;
     }
   };
 
-  const handleEditButtonClick = (index) => {
-    setIsModalOpen(true);
-    const userToEdit = users[index];
-    setName(userToEdit.name);
-    setEmail(userToEdit.email);
-    setRole(userToEdit.role);
-    setUsername(userToEdit.username);
-    setSelectedUser(index);
-    setIsEditing(true);
-  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  const handleCancelEdit = () => {
-    setSelectedUser(null);
-    setName("");
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setRole("");
-    setIsEditing(false);
-  };
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
 
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "", // Clear the error message for the current field
+    }));
+
+    if (name === "name") {
+      const timestamp = Date.now().toString();
+      const randomDigits = Math.floor(Math.random() * 10000);
+      const paddedRandomDigits = randomDigits.toString().padStart(4, "0");
+      const generatedUsername = `${value.replace(
+        /\s+/g,
+        ""
+      )}${paddedRandomDigits}`;
+      setPassword(generatedUsername);
+      setUsername(generatedUsername);
     }
-  };
-
-  const goToNextPage = () => {
-    const totalPages = Math.ceil(filteredAndRoleUsers.length / usersPerPage);
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const goToPage = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const filteredUsers = (users ?? []).filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  const filteredAndRoleUsers = filteredUsers.filter(
-    (user) => filterRole === "all" || user.role === filterRole
-  );
-
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredAndRoleUsers.slice(
-    indexOfFirstUser,
-    indexOfLastUser
-  );
-
-  const renderPagination = () => {
-    const totalPages = Math.ceil(filteredAndRoleUsers.length / usersPerPage);
-    const pageNumbers = Array.from(
-      { length: totalPages },
-      (_, index) => index + 1
-    );
-
-    return (
-      <div className="flex justify-center items-center mt-4">
-        <button
-          className="bg-gray-200 px-3 py-1 rounded-l"
-          onClick={goToPreviousPage}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        {pageNumbers.map((pageNumber) => (
-          <button
-            key={pageNumber}
-            className={`px-3 py-1 ${
-              pageNumber === currentPage
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
-            }`}
-            onClick={() => goToPage(pageNumber)}
-          >
-            {pageNumber}
-          </button>
-        ))}
-        <button
-          className="bg-gray-200 px-3 py-1 rounded-r"
-          onClick={goToNextPage}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
-    );
   };
 
   return (
     <AdminLayout>
-      <div className="sm:flex-auto">
-        <h1 className="text-xl font-semibold text-gray-900">Users</h1>
-        <p className="mt-2 text-sm text-gray-700">
-          A list of all the users in your account including their name, title,
-          email and role.
-        </p>
-
-        <div className="flex justify-between mb-4 mt-10">
-          <div className="w-1/4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearch}
-              placeholder="Search by name or email"
-              className="w-full border  text-sm border-gray-300 rounded-md      text-gray-900 block  pl-3 pr-10 py-2   sm:text-sm"
-            />
-          </div>
-          <div className="w-1/4 ">
-            <select
-              value={filterRole}
-              onChange={handleFilter}
-              className="w-full border border-gray-300 rounded-md  p-2 text-sm   text-gray-900 block  pl-3 pr-10 py-2   sm:text-sm  "
-            >
-              <option value="all">All Roles</option>
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-            </select>
-          </div>
-          <div>
-            <button
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm   rounded-md  text-white bg-blue-600  "
-              onClick={openModal}
-            >
-              <div className="flex items-center">
-                <AddIcon sx={{ fontSize: "20px" }} />
-                <span> Add User</span>
-              </div>
-            </button>
-          </div>
+      <div className="min-h-full">
+        <div>
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            Profile
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            This information will be displayed publicly so be careful what you
+            share.
+          </p>
         </div>
-        <CreateUserTable
-          users={users}
-          handleEditButtonClick={handleEditButtonClick}
-          handleDelete={handleDelete}
-          indexOfFirstUser={indexOfFirstUser}
-        />
-        {renderPagination()}
-        {isModalOpen && (
-          <CreateUserForm
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
-            onSubmit={handleSubmit}
-            onCancelEdit={handleCancelEdit}
-            isEditing={isEditing}
-            name={name}
-            email={email}
-            role={role}
-            username={username}
-            password={password}
-            handleNameChange={handleNameChange}
-            handleRoleChange={handleRoleChange}
-            handleEmailChange={(e) => setEmail(e.target.value)}
-            handleUsernameChange={(e) => setUsername(e.target.value)}
-            handlePasswordChange={(e) => setPassword(e.target.value)}
-          />
-        )}
+
+        <form className=" py-6" onSubmit={handleSubmit}>
+          <div className="max-w-3xl bg-white shadow rounded-lg py-4 mx-auto   sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
+            <div className="flex items-center bg-white space-x-5">
+              <div className="flex-shrink-0">
+                <div className="relative">
+                  <img
+                    className="h-16 w-16 rounded-full"
+                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                    alt=""
+                  />
+                  <span
+                    className="absolute inset-0 shadow-inner rounded-full"
+                    aria-hidden="true"
+                  ></span>
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Add Photo</h1>
+                <button
+                  type="button"
+                  className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Upload
+                </button>
+              </div>
+            </div>
+            <div className="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
+              <button
+                type="button"
+                className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
+              >
+                Disqualify
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
+              >
+                Advance to offer
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6 max-w-3xl   mx-auto grid grid-cols-1 gap-6   lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
+            <div className="space-y-6 lg:col-start-1 lg:col-span-2">
+              <section aria-labelledby="applicant-information-title">
+                <div className="bg-white shadow sm:rounded-lg">
+                  <div className="px-4 py-5 sm:px-6">
+                    <h2
+                      id="applicant-information-title"
+                      className="text-lg leading-6 font-medium text-gray-900"
+                    >
+                      Applicant Information
+                    </h2>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                      Personal details and application.
+                    </p>
+                  </div>
+                  <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
+                    <PersonalForm
+                      handleChange={handleChange}
+                      formData={formData}
+                      errors={errors}
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <section aria-labelledby="notes-title">
+                <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">
+                  <div className="divide-y divide-gray-200">
+                    <div className="px-4 py-5 sm:px-6">
+                      <h2
+                        id="notes-title"
+                        className="text-lg font-medium text-gray-900"
+                      >
+                        Academic Information
+                      </h2>
+                    </div>
+                    <div className="px-4 py-6 sm:px-6">
+                      <AcademicForm />
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section aria-labelledby="notes-title">
+                <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">
+                  <div className="divide-y divide-gray-200">
+                    <div className="px-4 py-5 sm:px-6">
+                      <h2
+                        id="notes-title"
+                        className="text-lg font-medium text-gray-900"
+                      >
+                        Family Information
+                      </h2>
+                    </div>
+                    <div className="px-4 py-6 sm:px-6">
+                      <FamilyInfoForm />
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <section
+              aria-labelledby="timeline-title"
+              className="lg:col-start-3 lg:col-span-1"
+            >
+              <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
+                <h2
+                  id="timeline-title"
+                  className="text-lg font-medium text-gray-900"
+                >
+                  User Info
+                </h2>
+
+                <div className="mt-6 flow-root">
+                  <div className="grid grid-cols-6 gap-6">
+                    <div className="col-span-6 sm:col-span-6">
+                      <FormControl fullWidth>
+                        <InputLabel id="country-label">Role</InputLabel>
+                        <Select
+                          id="role"
+                          name="role"
+                          autoComplete="role"
+                          labelId="role-label"
+                          fullWidth
+                          defaultValue={formData.role}
+                          value={formData.role}
+                          onChange={handleChange}
+                        >
+                          <MenuItem value="Teacher">Teacher</MenuItem>
+                          <MenuItem value="Student">Student</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                    <div className="col-span-6 sm:col-span-6">
+                      <TextField
+                        id="Username"
+                        name="Username"
+                        label="Username"
+                        value={username}
+                        autoComplete="Username"
+                        variant="outlined"
+                        fullWidth
+                      />
+                    </div>
+
+                    <div className="col-span-6 sm:col-span-6">
+                      <TextField
+                        id="email-address"
+                        name="password"
+                        label="Password"
+                        autoComplete="Password"
+                        value={password}
+                        variant="outlined"
+                        fullWidth
+                      />
+                    </div>
+
+                    <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+                      <label
+                        htmlFor="region"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Occupation
+                      </label>
+                      <input
+                        type="text"
+                        name="region"
+                        id="region"
+                        autoComplete="address-level1"
+                        className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 flex flex-col justify-stretch">
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Register
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </form>
       </div>
     </AdminLayout>
   );
 };
 
 export default Index;
-export async function getServerSideProps(context) {
-  connectDb();
-
-  const user = await User.find({}).sort({ updatedAt: -1 }).lean();
-
-  return {
-    props: {
-      user: JSON.parse(JSON.stringify(user)),
-    },
-  };
-}

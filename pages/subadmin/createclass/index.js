@@ -78,7 +78,7 @@ export async function getServerSideProps(context) {
   const faculties = await Faculty.find({}).sort({ updatedAt: -1 }).lean();
   const courses = await Course.find({}).sort({ updatedAt: -1 }).lean();
   const classes = await Class.find({}).sort({ updatedAt: -1 }).lean();
-  const teachers = await User.find({ role: "teacher" })
+  const teachers = await User.find({ role: "Teacher" })
     .sort({ updatedAt: -1 })
     .lean();
 

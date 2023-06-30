@@ -29,34 +29,6 @@ const Index = ({ user }) => {
 
   const usersPerPage = 5;
 
-  const registerUser = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/signup",
-        {
-          name: name,
-          username: username,
-          password: password,
-          role: role,
-          email: email,
-        }
-      );
-
-      if (response.status === 200) {
-        setUsers([...users, response.data]);
-        console.log("worked");
-      } else {
-        console.error("Registration failed");
-        return;
-      }
-
-      // Handle successful registration
-    } catch (error) {
-      console.error(error.response.data.message);
-      // Handle error during registration
-    }
-  };
-
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -267,17 +239,7 @@ const Index = ({ user }) => {
               <option value="teacher">Teacher</option>
             </select>
           </div>
-          <div>
-            <button
-              className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm   rounded-md  text-white bg-blue-600  "
-              onClick={openModal}
-            >
-              <div className="flex items-center">
-                <AddIcon sx={{ fontSize: "20px" }} />
-                <span> Add User</span>
-              </div>
-            </button>
-          </div>
+          <div></div>
         </div>
         <CreateUserTable
           users={users}

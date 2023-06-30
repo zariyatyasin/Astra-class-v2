@@ -14,7 +14,7 @@ const CreateClassForm = ({
   const [name, setname] = useState();
   const [code, setcode] = useState();
   const [description, setDescription] = useState();
-  const [faculty, setFaculty] = useState(faculties[0].faculty);
+  const [faculty, setFaculty] = useState(faculties[0]?.faculty);
   const [credits, setCredits] = useState();
   const [section, setSection] = useState();
   const [course, setCourse] = useState();
@@ -59,8 +59,6 @@ const CreateClassForm = ({
       toast.error(error?.response.data.message);
     }
   };
-
-  console.log("this si the teacher", teacher.teacherId);
 
   return (
     <div>
