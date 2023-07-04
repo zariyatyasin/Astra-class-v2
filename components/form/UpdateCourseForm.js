@@ -5,17 +5,25 @@ import axios from "axios";
 const UpdateCourseForm = ({
   faculties,
   courseId,
+  formData,
   courseList,
+  selectedRow,
   setData,
   setOpen,
 }) => {
-  const [name, setname] = useState();
-  const [code, setcode] = useState();
-  const [description, setDescription] = useState();
-  const [faculty, setFaculty] = useState();
-  const [credits, setCredits] = useState();
-  const [prerequisites, setPrerequisites] = useState();
+  const [name, setName] = useState(selectedRow?.name || "");
+  const [code, setCode] = useState(selectedRow?.code || "");
+  const [description, setDescription] = useState(
+    selectedRow?.description || ""
+  );
+  const [faculty, setFaculty] = useState(selectedRow?.faculty || "");
+  const [credits, setCredits] = useState(selectedRow?.credits || "");
+  const [prerequisites, setPrerequisites] = useState(
+    formData?.prerequisites || ""
+  );
   const [amount, setAmount] = useState(1);
+
+  console.log(selectedRow);
 
   useEffect(() => {
     setAmount(credits * 3000);
@@ -68,7 +76,7 @@ const UpdateCourseForm = ({
                   id="first-name"
                   autocomplete="given-name"
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                  onChange={(e) => setname(e.target.value)}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
 
@@ -85,7 +93,7 @@ const UpdateCourseForm = ({
                   value={code}
                   autocomplete="family-name"
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                  onChange={(e) => setcode(e.target.value)}
+                  onChange={(e) => setCode(e.target.value)}
                 />
               </div>
 
@@ -105,12 +113,12 @@ const UpdateCourseForm = ({
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-              <div className="col-span-6 sm:col-span-3">
+              {/* <div className="col-span-6 sm:col-span-3">
                 <SelcetInput
                   setPrerequisites={setPrerequisites}
                   data={courseList}
                 />
-              </div>
+              </div> */}
 
               <div className="col-span-6 sm:col-span-3">
                 <label
@@ -130,7 +138,7 @@ const UpdateCourseForm = ({
                 </select>
               </div>
 
-              <div className="col-span-3 sm:col-span-3 lg:col-span-3">
+              {/* <div className="col-span-3 sm:col-span-3 lg:col-span-3">
                 <label
                   htmlFor="city"
                   className="block text-sm font-medium text-gray-700"
@@ -150,7 +158,7 @@ const UpdateCourseForm = ({
                     {amount} tk
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">

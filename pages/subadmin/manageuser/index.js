@@ -93,6 +93,7 @@ const Index = ({ user }) => {
     );
 
     if (shouldDelete) {
+      console.log(user._id);
       try {
         if (userId === user._id) {
           console.error("You cannot delete yourself.");

@@ -8,31 +8,31 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 const index = ({ faculties }) => {
-  // const [name, setName] = useState("");
-  // const [faculty, setFacultyCode] = useState("");
+  const [name, setName] = useState("");
+  const [faculty, setFacultyCode] = useState("");
 
-  // const [data, setData] = useState(faculties);
+  const [data, setData] = useState(faculties);
 
-  // const onSubmitHanler = async (e) => {
-  //   e.preventDefault();
+  const onSubmitHanler = async (e) => {
+    e.preventDefault();
 
-  //   try {
-  //     const { data } = await axios.post("/api/subadmin/faculty", {
-  //       name,
-  //       faculty,
-  //     });
+    try {
+      const { data } = await axios.post("/api/subadmin/faculty", {
+        name,
+        faculty,
+      });
 
-  //     setData(Array.isArray(data.faculties) ? data.faculties : []);
-  //     setName("");
-  //     setFacultyCode("");
-  //     toast.success(data.message);
-  //   } catch (error) {
-  //     toast.error(error.response.data.message);
-  //   }
-  // };
+      setData(Array.isArray(data.faculties) ? data.faculties : []);
+      setName("");
+      setFacultyCode("");
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
   return (
     <AdminLayout>
-      {/* <form
+      <form
         className=" mb-8 grid grid-cols-6 gap-6 bg-white  sm:px-6 px-4 border rounded-md py-3"
         onSubmit={onSubmitHanler}
       >
@@ -78,11 +78,8 @@ const index = ({ faculties }) => {
         </div>
       </form>
       <div>
-      
-        <DepermentList data={data} setData={setData} />
-      </div> */}
-
-      <Crudtable />
+        <DepermentList data={data} setData={setData} />{" "}
+      </div>
     </AdminLayout>
   );
 };

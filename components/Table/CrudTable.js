@@ -133,7 +133,10 @@ export default function Crudtable() {
   ];
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div
+      style={{ height: 400, width: "100%" }}
+      className="bg-white p-4 shadow rounded-lg"
+    >
       <DataGrid
         rows={rows}
         columns={columns}

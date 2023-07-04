@@ -11,7 +11,7 @@ import MuiCourseTable from "@/components/SubAdmin/course/MuiCourseTable";
 
 const index = ({ faculties, courses }) => {
   const [modelOpen, setModelOpen] = useState(false);
-
+  console.log(faculties);
   const [data, setData] = useState(courses);
 
   return (
@@ -63,7 +63,7 @@ const index = ({ faculties, courses }) => {
             </p>
           </button>
         </div>
-        {/* <CourseTable data={data} setData={setData} /> */}
+
         <MuiCourseTable data={data} setData={setData} faculties={faculties} />
       </div>
     </AdminLayout>

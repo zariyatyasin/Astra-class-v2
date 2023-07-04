@@ -9,7 +9,7 @@ const facultySchema = new mongoose.Schema(
 
     faculty: {
       type: String,
-      required: true,
+
       unique: true,
     },
 

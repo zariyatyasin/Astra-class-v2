@@ -8,11 +8,13 @@ import Class from "@/model/Class";
 import { connectDb } from "@/utils/db";
 import React, { useState } from "react";
 import User from "@/model/User";
+import ClassListTable from "@/components/Table/ClassListTable";
+import ClassForm from "@/components/forms/CreateClassForm2";
 
 const index = ({ teachers, courses, faculties, classes }) => {
-  console.log("this is all teacher", teachers);
   const [modelOpen, setModelOpen] = useState(false);
   const [data, setData] = useState(classes);
+
   return (
     <AdminLayout>
       <CreateClassModel
@@ -23,6 +25,7 @@ const index = ({ teachers, courses, faculties, classes }) => {
         setData={setData}
         setModelOpen={setModelOpen}
       />
+
       <div className="  ">
         <h2 className="text-lg font-medium text-gray-900">Create Class</h2>
         <div className="flex-1  my-4  flex justify-between">
@@ -65,9 +68,11 @@ const index = ({ teachers, courses, faculties, classes }) => {
             </button>
           </div>
         </div>
-        <CourseListCard />
-        <CreateClassTab data={data} />{" "}
+        {/* <CourseListCard />
+        <CreateClassTab data={data} />{" "} */}
       </div>
+
+      <ClassListTable data={data} setData={setData} />
     </AdminLayout>
   );
 };

@@ -13,7 +13,6 @@ const courseSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
     },
 
     prerequisites: [
@@ -25,11 +24,9 @@ const courseSchema = new mongoose.Schema(
 
     credits: {
       type: Number,
-      required: true,
     },
     amount: {
       type: Number,
-      required: true,
     },
 
     faculty: {

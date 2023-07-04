@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import axios from "axios";
 const EnrollmentSubadmin = ({ faculties, accessEnrollment }) => {
   const [enrollmentActive, setenrollmentActive] = useState(
-    accessEnrollment[0].enrollmentActive
+    accessEnrollment[0]?.enrollmentActive
   );
   const [selectedFaculties, setSelectedFaculties] = useState([]);
   const [name, setName] = useState("");

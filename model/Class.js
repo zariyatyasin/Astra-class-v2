@@ -22,23 +22,14 @@ const ClassSchema = new mongoose.Schema(
     ],
     credits: {
       type: Number,
-      required: true,
     },
     section: {
       type: String,
-      required: true,
     },
-    teacher: [
-      {
-        teacherId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        teacherName: {
-          type: String,
-        },
-      },
-    ],
+    teacher: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     students: [
       {
         studentId: {
@@ -49,9 +40,17 @@ const ClassSchema = new mongoose.Schema(
         studentRoll: String,
       },
     ],
+
+    batch: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Batch",
+      required: true,
+      unique: true,
+    },
     startDate: {
       type: Date,
     },
+
     endDate: {
       type: Date,
     },

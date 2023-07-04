@@ -11,7 +11,7 @@ handler.post(async (req, res) => {
       req.body;
     const upperCode = code?.toUpperCase();
 
-    if (!name || !code || !description || !credits || !faculty) {
+    if (!name || !code || !faculty) {
       res.status(400).json({ message: "Please fill in all fields" });
       return;
     }
@@ -75,7 +75,7 @@ handler.delete(async (req, res) => {
   try {
     connectDb();
 
-    const courseId = req.query.id || req.body.id;
+    const { courseId } = req.body;
 
     if (!courseId) {
       res.status(400).json({ message: "Please provide a valid course ID" });

@@ -16,10 +16,10 @@ const SelectInputFromData = ({ data, itemName, onSelect, setname }) => {
     setSearchQuery(item.name);
     setIsOpen(false);
 
-    onSelect({ teacherId: item._id, teacherName: item.name });
+    onSelect(item._id);
   };
   const filteredData = data?.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    item?.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
   useEffect(() => {
     function handleClickOutside(event) {

@@ -1,7 +1,15 @@
 import UpdateCourseForm from "@/components/form/UpdateCourseForm";
 import React from "react";
 
-const UpdateCourse = ({ setOpen, faculties, courseId, data, setData }) => {
+const UpdateCourse = ({
+  setOpen,
+  faculties,
+  courseId,
+  selectedRow,
+  data,
+  formData,
+  setData,
+}) => {
   return (
     <div>
       <div className={`  `}>
@@ -29,7 +37,9 @@ const UpdateCourse = ({ setOpen, faculties, courseId, data, setData }) => {
               <UpdateCourseForm
                 faculties={faculties}
                 courseId={courseId}
+                selectedRow={selectedRow}
                 courseList={data}
+                formData={formData}
                 setData={setData}
                 setOpen={setOpen}
               />

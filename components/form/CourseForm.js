@@ -108,9 +108,9 @@ const CoursehtmlForm = ({
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-              <div className="col-span-6 sm:col-span-3">
+              {/* <div className="col-span-6 sm:col-span-3">
                 <SelcetInput setPrerequisites={setPrerequisites} data={data} />
-              </div>
+              </div> */}
 
               <div className="col-span-6 sm:col-span-3">
                 <label
@@ -125,17 +125,17 @@ const CoursehtmlForm = ({
                   onChange={(e) => setFaculty(e.target.value)}
                 >
                   {faculties.map((item, id) => (
-                    <option key={id}>{item.faculty}</option>
+                    <option key={id}>{item.name}</option>
                   ))}
                 </select>
               </div>
 
-              <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+              {/* <div className="col-span-6 sm:col-span-3 lg:col-span-2">
                 <label
                   htmlFor="city"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Credits
+                  Amount
                 </label>
                 <input
                   type="text"
@@ -152,7 +152,7 @@ const CoursehtmlForm = ({
                     {amount} tk
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">

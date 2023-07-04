@@ -1,11 +1,28 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import UpdateCourse from "./UpdateCourse";
+import { useState } from "react";
+import axios from "axios";
 
 export default function EnrollmentTable({ data, faculties, setData }) {
-  const [open, setOpen] = React.useState(false);
-  const [selectedRow, setSelectedRow] = React.useState(null);
-  console.log(this);
+  const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [formData, setFormData] = useState(null);
+
+  const handleDelete = async () => {
+    console.log(selectedRow?._id);
+    try {
+      const { data } = await axios.delete(`/api/subadmin/course`, {
+        courseId: "64a2cddbec31ff1658ffd0ac",
+      });
+
+      console.log(data);
+      setData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const columns = [
     { field: "name", headerName: "Name", width: 200 },
     { field: "code", headerName: "Code", width: 200 },
@@ -30,9 +47,7 @@ export default function EnrollmentTable({ data, faculties, setData }) {
             </button>
             <button
               className="bg-red-500 text-white px-4 py-2 rounded-md"
-              onClick={() => {
-                console.log("Delete clicked for ID:", row._id);
-              }}
+              onClick={handleDelete}
             >
               Delete
             </button>
@@ -61,15 +76,13 @@ export default function EnrollmentTable({ data, faculties, setData }) {
           <UpdateCourse
             setOpen={setOpen}
             faculties={faculties}
-            courseId={selectedRow._id}
-            data={data}
+            courseId={selectedRow?._id}
+            selectedRow={selectedRow}
             setData={setData}
           />
-          {/* <span className="close" onClick={() => setOpen(false)}>
-              &times;
-            </span>
-            <h2>Update Row</h2>
-            <p>Selected Row ID: {selectedRow._id}</p> */}
+          <span className="close" onClick={() => setOpen(false)}>
+            &times;
+          </span>
         </div>
       )}
     </div>

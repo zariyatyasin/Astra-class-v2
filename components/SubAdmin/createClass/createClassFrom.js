@@ -11,14 +11,66 @@ const CreateClassForm = ({
   setData,
   setModelOpen,
 }) => {
-  const [name, setname] = useState();
-  const [code, setcode] = useState();
-  const [description, setDescription] = useState();
+  const [name, setname] = useState("");
+  const [code, setcode] = useState("");
+  const [description, setDescription] = useState("");
   const [faculty, setFaculty] = useState(faculties[0]?.faculty);
-  const [credits, setCredits] = useState();
-  const [section, setSection] = useState();
-  const [course, setCourse] = useState();
-  const [teacher, setTeacher] = useState();
+  const [credits, setCredits] = useState("");
+  const [section, setSection] = useState("");
+  const [course, setCourse] = useState("");
+  const [teacher, setTeacher] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [batch, setBatch] = useState("");
+
+  const [schedule, setSchedule] = useState([]);
+
+  const handleDayOfWeekSelect = (selectedDayOfWeek, index) => {
+    setSchedule((prevSchedule) => {
+      const updatedSchedule = [...prevSchedule];
+      updatedSchedule[index] = {
+        ...updatedSchedule[index],
+        dayOfWeek: selectedDayOfWeek,
+      };
+      return updatedSchedule;
+    });
+  };
+
+  const handleStartTimeChange = (startTime, index) => {
+    setSchedule((prevSchedule) => {
+      const updatedSchedule = [...prevSchedule];
+      updatedSchedule[index] = {
+        ...updatedSchedule[index],
+        startTime,
+      };
+      return updatedSchedule;
+    });
+  };
+
+  const handleEndTimeChange = (endTime, index) => {
+    setSchedule((prevSchedule) => {
+      const updatedSchedule = [...prevSchedule];
+      updatedSchedule[index] = {
+        ...updatedSchedule[index],
+        endTime,
+      };
+      return updatedSchedule;
+    });
+  };
+  const handleAddSchedule = () => {
+    setSchedule((prevSchedule) => [
+      ...prevSchedule,
+      { dayOfWeek: "", startTime: "", endTime: "" },
+    ]);
+  };
+
+  const handleRemoveSchedule = (index) => {
+    setSchedule((prevSchedule) => {
+      const updatedSchedule = [...prevSchedule];
+      updatedSchedule.splice(index, 1);
+      return updatedSchedule;
+    });
+  };
 
   const handleCourseSelect = (selectedCourse) => {
     setCourse(selectedCourse);
@@ -43,6 +95,10 @@ const CreateClassForm = ({
           description,
           credits,
           section,
+          startDate,
+          endDate,
+          batch,
+          schedule,
         }
       );
 
@@ -52,7 +108,10 @@ const CreateClassForm = ({
       setDescription("");
       setSection("");
       setCredits("");
-
+      setStartDate("");
+      setEndDate("");
+      setBatch("");
+      setSchedule([]);
       setModelOpen(false);
       toast.success(data.message);
     } catch (error) {
@@ -122,7 +181,21 @@ const CreateClassForm = ({
                   ))}
                 </select>
               </div>
-
+              <div className="col-span-6 sm:col-span-3">
+                <label
+                  htmlFor="batch"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Batch
+                </label>
+                <input
+                  type="text"
+                  name="batch"
+                  value={batch}
+                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
+                  onChange={(e) => setBatch(e.target.value)}
+                />
+              </div>
               <div className="col-span-6 sm:col-span-3 flex gap-x-4">
                 <div className="flex-1">
                   <label
@@ -193,6 +266,123 @@ const CreateClassForm = ({
                     }}
                   />
                 </div>
+              </div>
+              <div className="col-span-6 sm:col-span-3 lg:col-span-3 flex  gap-4">
+                <div className="flex-1">
+                  <label
+                    htmlFor="start-date"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Starting Date
+                  </label>
+                  <input
+                    type="date"
+                    name="start-date"
+                    value={startDate}
+                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </div>
+                <div className="flex-1">
+                  <label
+                    htmlFor="end-date"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Ending Date
+                  </label>
+                  <input
+                    type="date"
+                    name="end-date"
+                    value={endDate}
+                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
+              </div>
+              {schedule.map((item, index) => (
+                <div key={index}>
+                  <div
+                    key={index}
+                    className="col-span-6 sm:col-span-3 lg:col-span-2"
+                  >
+                    <label className="block text-sm font-medium text-gray-700">
+                      Day of Week
+                    </label>
+                    <select
+                      name={`day-of-week-${index}`}
+                      className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      onChange={(e) =>
+                        handleDayOfWeekSelect(e.target.value, index)
+                      }
+                    >
+                      <option value="">Select a day</option>
+                      <option value="Monday">Monday</option>
+                      <option value="Tuesday">Tuesday</option>
+                      <option value="Wednesday">Wednesday</option>
+                      <option value="Thursday">Thursday</option>
+                      <option value="Friday">Friday</option>
+                      <option value="Saturday">Saturday</option>
+                      <option value="Sunday">Sunday</option>
+                    </select>
+                  </div>
+
+                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+                    <label
+                      htmlFor={`start-time-${index}`}
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Start Time
+                    </label>
+                    <input
+                      type="text"
+                      name={`start-time-${index}`}
+                      value={item.startTime}
+                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
+                      onChange={(e) =>
+                        handleStartTimeChange(e.target.value, index)
+                      }
+                    />
+                  </div>
+
+                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+                    <label
+                      htmlFor={`end-time-${index}`}
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      End Time
+                    </label>
+                    <input
+                      type="text"
+                      name={`end-time-${index}`}
+                      value={item.endTime}
+                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
+                      onChange={(e) =>
+                        handleEndTimeChange(e.target.value, index)
+                      }
+                    />
+                  </div>
+
+                  {index > 0 && (
+                    <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSchedule(index)}
+                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+              <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+                <button
+                  type="button"
+                  onClick={handleAddSchedule}
+                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Add Schedule
+                </button>
               </div>
             </div>
           </div>
