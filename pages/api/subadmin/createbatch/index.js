@@ -7,22 +7,21 @@ const handler = nc();
 handler.post(async (req, res) => {
   try {
     connectDb();
-    const { batchCode, batchName, endDate, startDate } = req.body;
-    const upperCode = batchCode?.toUpperCase();
+    const { batchName, endDate, startDate } = req.body;
+    const upperCode = batchName?.toUpperCase();
 
-    if (!batchName || !batchCode) {
-      res.status(400).json({ message: "Please fill in all fields" });
+    if (!batchName) {
+      res.status(400).json({ message: "Batch name is required" });
       return;
     }
 
-    const existingBatch = await Batch.findOne({ batchCode: upperCode });
+    const existingBatch = await Batch.findOne({ batchName: upperCode });
     if (existingBatch) {
       res.status(400).json({ message: "This Batch is Already There" });
       return;
     }
     const SaveBatch = new Batch({
-      batchName,
-      batchCode: upperCode,
+      batchName: upperCode,
 
       endDate,
       startDate,
@@ -70,8 +69,8 @@ handler.delete(async (req, res) => {
 handler.put(async (req, res) => {
   try {
     connectDb();
-    const { id, batchCode, batchName, endDate, startDate } = req.body;
-    const upperCode = batchCode ? batchCode.toUpperCase() : undefined;
+    const { id, batchName, endDate, startDate } = req.body;
+    const upperCode = batchName ? batchName.toUpperCase() : undefined;
     const existingBatch = await Batch.findOne({ id });
     if (existingBatch) {
       res.status(400).json({ message: "This Batch Code is Already Taken" });
@@ -80,8 +79,8 @@ handler.put(async (req, res) => {
     const batch = await Batch.findByIdAndUpdate(
       id,
       {
-        batchCode: upperCode,
-        batchName,
+        batchName: upperCode,
+
         endDate,
         startDate,
       },

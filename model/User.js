@@ -28,7 +28,9 @@ const userSchema = new mongoose.Schema(
       enum: ["Teacher", "Student", "Admin", "Subadmin"],
       required: true,
     },
-
+    batch: {
+      type: String,
+    },
     firstName: {
       type: String,
     },

@@ -8,7 +8,14 @@ import {
   InputLabel,
 } from "@mui/material";
 
-const PersonalForm = ({ handleChange, formData, errors }) => {
+const PersonalForm = ({
+  handleChange,
+  formData,
+  errors,
+  batch,
+  setGetName,
+}) => {
+  console.log(batch);
   return (
     <div>
       <Grid container spacing={2}>
@@ -126,6 +133,37 @@ const PersonalForm = ({ handleChange, formData, errors }) => {
             variant="outlined"
             fullWidth
           />
+        </Grid>
+        <Grid item xs={12} sm={6} lg={3}>
+          <TextField
+            id="street"
+            name="street"
+            label="Street"
+            autoComplete="address-level1"
+            variant="outlined"
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} lg={3}>
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel id="batch-label">Batch</InputLabel>
+            <Select
+              labelId="batch-label"
+              id="batch"
+              name="batch"
+              autoComplete="batch"
+              label="Batch"
+              value={formData.batch}
+              onChange={handleChange}
+            >
+              {batch.map((item) => (
+                <MenuItem key={item._id} value={item._id}>
+                  {setGetName(item.batchName)}
+                  {item.batchName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Grid>
       </Grid>
     </div>

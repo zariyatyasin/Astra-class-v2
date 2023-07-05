@@ -15,13 +15,13 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 const schema = yup.object().shape({
-  batchName: yup.string().required("Name is required"),
-  batchCode: yup.string().required("Code is required"),
+  batchName: yup
+    .string()
+    .required("Name is required")
+    .matches(/^\S*$/, "Space is not allowed"),
 });
-
 const CreateBatchForm = ({ initialData, setData, setOpen }) => {
   console.log(initialData);
-
   const {
     register,
     handleSubmit,
@@ -79,7 +79,7 @@ const CreateBatchForm = ({ initialData, setData, setOpen }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="bg-white">
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={12}>
           <TextField
             label="Name"
             variant="outlined"
@@ -90,29 +90,8 @@ const CreateBatchForm = ({ initialData, setData, setOpen }) => {
             fullWidth
           />
         </Grid>
+
         <Grid item xs={12} sm={6}>
-          <TextField
-            label="Code"
-            variant="outlined"
-            {...register("batchCode")}
-            defaultValue={initialData?.batchCode || ""}
-            error={!!errors.batchCode}
-            helperText={errors.batchCode?.message}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Batch"
-            variant="outlined"
-            {...register("batch")}
-            defaultValue={initialData?.batch || ""}
-            // error={!!errors.batch}
-            // helperText={errors.batch?.message}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12} sm={3}>
           <TextField
             label="Start Date"
             type="date"
@@ -125,7 +104,7 @@ const CreateBatchForm = ({ initialData, setData, setOpen }) => {
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={6}>
           <TextField
             label="End Date"
             type="date"

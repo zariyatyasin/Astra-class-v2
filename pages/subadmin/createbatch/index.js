@@ -11,7 +11,6 @@ import { connectDb } from "@/utils/db";
 const Index = ({ batch }) => {
   const columnConfig = [
     { field: "batchName", headerName: "Name", width: 200 },
-    { field: "batchCode", headerName: "Code", width: 200 },
 
     { field: "startDate", headerName: "Start", width: 200 },
     { field: "endDate", headerName: "End", width: 200 },

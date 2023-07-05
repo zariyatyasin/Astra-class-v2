@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-
+import { connectDb } from "@/utils/db";
 import AdminLayout from "@/components/SubAdmin/layout/AdminLayout";
 import PersonalForm from "@/components/form/PersonalForm";
-
+import Batch from "@/model/Batch";
 import {
   TextField,
   Select,
@@ -13,12 +13,14 @@ import {
 import AcademicForm from "@/components/forms/AcademicForm";
 import FamilyInfoForm from "@/components/forms/FamilyInfoForm";
 import axios from "axios";
-const Index = ({ user }) => {
+const Index = ({ batch }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [getName, setGetName] = useState("");
   const initialFormData = {
     lastName: "",
     username,
+    batch: "",
     password,
     name: "",
     email: "",
@@ -51,7 +53,7 @@ const Index = ({ user }) => {
 
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState(initialErrors);
-
+  console.log("this si mat", formData.batch, getName);
   const resetForm = () => {
     setFormData(initialFormData);
     setErrors(initialErrors);
@@ -77,12 +79,12 @@ const Index = ({ user }) => {
           username: username,
           password: password,
           role: formData.role,
+          batch: formData.batch,
           email: formData.email,
         }
       );
 
       if (response.status === 200) {
-        console.log(response.data);
         resetForm();
       } else {
         console.error("Registration failed");
@@ -200,7 +202,9 @@ const Index = ({ user }) => {
                   <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
                     <PersonalForm
                       handleChange={handleChange}
+                      batch={batch}
                       formData={formData}
+                      setGetName={setGetName}
                       errors={errors}
                     />
                   </div>
@@ -334,3 +338,13 @@ const Index = ({ user }) => {
 };
 
 export default Index;
+export async function getServerSideProps(context) {
+  connectDb();
+  const batch = await Batch.find({}).sort({ updatedAt: -1 }).lean();
+
+  return {
+    props: {
+      batch: JSON.parse(JSON.stringify(batch)),
+    },
+  };
+}
