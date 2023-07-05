@@ -40,13 +40,16 @@ const ClassSchema = new mongoose.Schema(
         studentRoll: String,
       },
     ],
-
     batch: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Batch",
-      required: true,
-      unique: true,
+      batchId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Batch",
+        required: true,
+        unique: true,
+      },
+      batchName: String,
     },
+
     startDate: {
       type: Date,
     },
@@ -57,6 +60,9 @@ const ClassSchema = new mongoose.Schema(
     faculty: {
       type: String,
       required: true,
+    },
+    maxCapacity: {
+      type: Number,
     },
     schedule: [
       {

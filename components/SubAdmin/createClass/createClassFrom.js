@@ -343,7 +343,6 @@ const CreateClassForm = ({
                       }
                     />
                   </div>
-
                   <div className="col-span-6 sm:col-span-3 lg:col-span-2">
                     <label
                       htmlFor={`end-time-${index}`}
@@ -361,7 +360,6 @@ const CreateClassForm = ({
                       }
                     />
                   </div>
-
                   {index > 0 && (
                     <div className="col-span-6 sm:col-span-3 lg:col-span-2">
                       <button
