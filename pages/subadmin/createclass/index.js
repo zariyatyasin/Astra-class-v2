@@ -8,17 +8,30 @@ import Class from "@/model/Class";
 import { connectDb } from "@/utils/db";
 import React, { useState } from "react";
 import User from "@/model/User";
+import Batch from "@/model/Batch";
 import ClassListTable from "@/components/Table/ClassListTable";
 import ClassForm from "@/components/forms/CreateClassForm2";
+import ClassListTableData from "@/components/Table/CreateClassTable";
 
-const index = ({ teachers, courses, faculties, classes }) => {
+const index = ({ teachers, courses, faculties, classes, batches }) => {
+  const columnConfig = [
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "code", headerName: "Code", width: 200 },
+
+    { field: "section", headerName: "Section", width: 120 },
+    { field: "faculty", headerName: "Faculty", width: 200 },
+    { field: "teacher", headerName: "Teacher", width: 200 },
+    { field: "isActive", headerName: "Active", width: 120 },
+    { field: "actions", headerName: "Actions", width: 300 },
+  ];
   const [modelOpen, setModelOpen] = useState(false);
   const [data, setData] = useState(classes);
-
+  console.log(classes);
   return (
     <AdminLayout>
       <CreateClassModel
         teachers={teachers}
+        batches={batches}
         courses={courses}
         faculties={faculties}
         modelOpen={modelOpen}
@@ -72,7 +85,16 @@ const index = ({ teachers, courses, faculties, classes }) => {
         <CreateClassTab data={data} />{" "} */}
       </div>
 
-      <ClassListTable data={data} setData={setData} />
+      {/* <ClassListTable data={data} setData={setData} /> */}
+      <ClassListTableData
+        data={data}
+        setData={setData}
+        teachers={teachers}
+        batches={batches}
+        courses={courses}
+        faculties={faculties}
+        columnConfig={columnConfig}
+      />
     </AdminLayout>
   );
 };
@@ -83,6 +105,7 @@ export async function getServerSideProps(context) {
   const faculties = await Faculty.find({}).sort({ updatedAt: -1 }).lean();
   const courses = await Course.find({}).sort({ updatedAt: -1 }).lean();
   const classes = await Class.find({}).sort({ updatedAt: -1 }).lean();
+  const batches = await Batch.find({}).sort({ updatedAt: -1 }).lean();
   const teachers = await User.find({ role: "Teacher" })
     .sort({ updatedAt: -1 })
     .lean();
@@ -93,6 +116,7 @@ export async function getServerSideProps(context) {
       courses: JSON.parse(JSON.stringify(courses)),
       teachers: JSON.parse(JSON.stringify(teachers)),
       classes: JSON.parse(JSON.stringify(classes)),
+      batches: JSON.parse(JSON.stringify(batches)),
     },
   };
 }

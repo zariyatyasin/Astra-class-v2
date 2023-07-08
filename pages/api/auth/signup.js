@@ -6,35 +6,42 @@ import { validateEmail } from "@/utils/validation";
 import nc from "next-connect";
 import { createActivationToken } from "@/utils/tokens";
 import User from "@/model/User";
+import Student from "@/model/Student";
+import auth from "@/middleware/auth";
 
-const handler = nc();
+const handler = nc().use(auth);
 
 handler.post(async (req, res) => {
   try {
     await connectDb();
-    const { username, password } = req.body;
+    const { username, password, role } = req.body;
 
-    if (!username || !password) {
+    if (!username || !password || !role) {
       res.status(400).json({ message: "Please fill in all fields" });
       return;
     }
 
     const user = await User.findOne({ username });
     if (user) {
-      return res.status(400).json({ message: "User already exits" });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const cryptedPassword = await bcrypt.hash(password, 12);
     const newUser = new User({
       ...req.body,
-
       password: cryptedPassword,
     });
 
-    const addedUser = await newUser.save();
+    let addedUser;
+    if (role === "Student") {
+      const newStudent = new Student({ ...req.body, studentId: newUser._id });
+      addedUser = await Promise.all([newUser.save(), newStudent.save()]);
+    } else {
+      addedUser = await newUser.save();
+    }
 
     const activation_token = createActivationToken({
-      id: addedUser._id.toString(),
+      id: newUser._id.toString(),
     });
     await disconnectDb();
     res.status(200).json({ message: "Register success" });
@@ -42,6 +49,7 @@ handler.post(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 handler.delete(async (req, res) => {
   try {
     const session = await getToken({

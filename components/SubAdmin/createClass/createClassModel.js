@@ -6,6 +6,7 @@ export const CreateClassModel = ({
   setModelOpen,
   teachers,
   courses,
+  batches,
   setData,
   faculties,
 }) => {
@@ -35,6 +36,7 @@ export const CreateClassModel = ({
             <CreateClassForm
               setModelOpen={setModelOpen}
               setData={setData}
+              batches={batches}
               teachers={teachers}
               courses={courses}
               faculties={faculties}

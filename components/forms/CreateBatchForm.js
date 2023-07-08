@@ -21,7 +21,6 @@ const schema = yup.object().shape({
     .matches(/^\S*$/, "Space is not allowed"),
 });
 const CreateBatchForm = ({ initialData, setData, setOpen }) => {
-  console.log(initialData);
   const {
     register,
     handleSubmit,

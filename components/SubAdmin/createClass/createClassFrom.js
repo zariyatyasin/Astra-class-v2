@@ -1,83 +1,93 @@
-import SelectInputFromData from "@/components/inputs/SelectInputCourse";
-
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
+import axios from "axios";
+import {
+  Grid,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import SelectInputFromData from "@/components/inputs/SelectInputCourse";
 
 const CreateClassForm = ({
   teachers,
   courses,
   faculties,
+  initialData,
+  batches,
   setData,
   setModelOpen,
 }) => {
-  const [name, setname] = useState("");
-  const [code, setcode] = useState("");
-  const [description, setDescription] = useState("");
-  const [faculty, setFaculty] = useState(faculties[0]?.faculty);
-  const [credits, setCredits] = useState("");
-  const [section, setSection] = useState("");
-  const [course, setCourse] = useState("");
-  const [teacher, setTeacher] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [batch, setBatch] = useState("");
+  const [selectedTeacher, setSelectedTeacher] = useState({ id: "", name: "" });
+  const [selectedBatch, setSelectedBatch] = useState({ id: "", name: "" });
+  console.log("hello is nis", initialData);
+  const [classData, setClassData] = useState({
+    name: "",
+    code: "",
+    description: "",
+    faculty: "",
+    credits: "",
+    section: "",
+    course: "",
+    maxCapacity: "",
+    startDate: "",
+    endDate: "",
 
-  const [schedule, setSchedule] = useState([]);
+    schedule: [],
+  });
 
   const handleDayOfWeekSelect = (selectedDayOfWeek, index) => {
-    setSchedule((prevSchedule) => {
-      const updatedSchedule = [...prevSchedule];
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
       updatedSchedule[index] = {
         ...updatedSchedule[index],
         dayOfWeek: selectedDayOfWeek,
       };
-      return updatedSchedule;
+      return { ...prevData, schedule: updatedSchedule };
     });
   };
 
   const handleStartTimeChange = (startTime, index) => {
-    setSchedule((prevSchedule) => {
-      const updatedSchedule = [...prevSchedule];
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
       updatedSchedule[index] = {
         ...updatedSchedule[index],
         startTime,
       };
-      return updatedSchedule;
+      return { ...prevData, schedule: updatedSchedule };
     });
   };
 
   const handleEndTimeChange = (endTime, index) => {
-    setSchedule((prevSchedule) => {
-      const updatedSchedule = [...prevSchedule];
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
       updatedSchedule[index] = {
         ...updatedSchedule[index],
         endTime,
       };
-      return updatedSchedule;
+      return { ...prevData, schedule: updatedSchedule };
     });
   };
+
   const handleAddSchedule = () => {
-    setSchedule((prevSchedule) => [
-      ...prevSchedule,
-      { dayOfWeek: "", startTime: "", endTime: "" },
-    ]);
+    setClassData((prevData) => ({
+      ...prevData,
+      schedule: [
+        ...prevData.schedule,
+        { dayOfWeek: "", startTime: "", endTime: "" },
+      ],
+    }));
   };
 
   const handleRemoveSchedule = (index) => {
-    setSchedule((prevSchedule) => {
-      const updatedSchedule = [...prevSchedule];
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
       updatedSchedule.splice(index, 1);
-      return updatedSchedule;
+      return { ...prevData, schedule: updatedSchedule };
     });
-  };
-
-  const handleCourseSelect = (selectedCourse) => {
-    setCourse(selectedCourse);
-  };
-
-  const handleTeacherSelect = (selectedTeacher) => {
-    setTeacher(selectedTeacher);
   };
 
   const handleSubmit = async (e) => {
@@ -87,31 +97,36 @@ const CreateClassForm = ({
       const { data } = await axios.post(
         "http://localhost:3000/api/subadmin/createclass",
         {
-          name,
-          code,
-          faculty,
-          course,
-          teacher: teacher.teacherId,
-          description,
-          credits,
-          section,
-          startDate,
-          endDate,
-          batch,
-          schedule,
+          batch: {
+            batchId: selectedBatch.id,
+            batchName: selectedBatch.name,
+          },
+          teacher: {
+            teacherId: selectedTeacher.id,
+            teacherName: selectedTeacher.name,
+          },
+
+          ...classData,
         }
       );
 
       setData(Array.isArray(data.class) ? data.class : []);
-      setname("");
-      setcode("");
-      setDescription("");
-      setSection("");
-      setCredits("");
-      setStartDate("");
-      setEndDate("");
-      setBatch("");
-      setSchedule([]);
+      setClassData({
+        name: "",
+        code: "",
+        description: "",
+        faculty: faculties[0]?.faculty,
+        credits: "",
+        section: "",
+        course: "",
+        maxCapacity: "",
+        startDate: "",
+        endDate: "",
+
+        schedule: [],
+      });
+      setSelectedTeacher({ id: "", name: "" });
+      setSelectedBatch({ id: "", name: "" });
       setModelOpen(false);
       toast.success(data.message);
     } catch (error) {
@@ -121,276 +136,323 @@ const CreateClassForm = ({
 
   return (
     <div>
-      <form action="#" method="POST" onSubmit={handleSubmit}>
-        <div className=" overflow-hidden  ">
-          <div className="px-4 py-5 bg-white sm:p-6">
-            <h2 className="text-2xl mb-6 font-semibold tracking-tight text-gray-900 sm:text-3xl">
-              Create Class
-            </h2>
-            <div className="grid grid-cols-6 gap-6">
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium text-gray-700"
-                ></label>
-                <SelectInputFromData
-                  itemName={"Course"}
-                  setname={setname}
-                  data={courses}
-                  onSelect={handleCourseSelect}
-                />
-              </div>
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="email-address"
-                  className="block text-sm font-medium text-gray-700"
+      <form onSubmit={handleSubmit}>
+        <div className="px-4 py-5 bg-white sm:p-6">
+          <h2 className="text-2xlmb-6 font-semibold tracking-tight text-gray-900sm:text-3xl">
+            Create Class
+          </h2>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="course">Course</InputLabel>
+                <Select
+                  id="course"
+                  value={classData.course ?? ""}
+                  onChange={(e) =>
+                    setClassData({
+                      ...classData,
+                      course: e.target.value,
+                    })
+                  }
+                  label="Course"
                 >
-                  Description
-                </label>
-                <input
-                  type="text"
-                  name="email-address"
-                  id="email-address"
-                  value={description}
-                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="col-span-6 sm:col-span-3">
-                <SelectInputFromData
-                  itemName={"Add Teacher"}
-                  data={teachers}
-                  onSelect={handleTeacherSelect}
-                />
-              </div>
+                  {courses?.map((item, id) => (
+                    <MenuItem key={id} value={item._id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
 
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium text-gray-700"
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="description"
+                label="Description"
+                variant="outlined"
+                defaultValue={initialData?.description || ""}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    description: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="teacher">Add Teacher</InputLabel>
+                <Select
+                  id="teacher"
+                  value={selectedTeacher.id}
+                  onChange={(e) => {
+                    const selectedTeacherId = e.target.value;
+                    const selectedTeacherData = teachers.find(
+                      (teacher) => teacher._id === selectedTeacherId
+                    );
+                    setSelectedTeacher({
+                      id: selectedTeacherId,
+                      name: selectedTeacherData ? selectedTeacherData.name : "",
+                    });
+                  }}
+                  label="Add Teacher"
                 >
-                  faculty
-                </label>
-                <select
-                  name="country"
-                  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  onChange={(e) => setFaculty(e.target.value)}
+                  {teachers?.map((item) => (
+                    <MenuItem key={item._id} value={item._id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="faculty">Faculty</InputLabel>
+                <Select
+                  id="faculty"
+                  value={classData.faculty ?? " "}
+                  onChange={(e) =>
+                    setClassData({
+                      ...classData,
+                      faculty: e.target.value,
+                    })
+                  }
+                  label="Faculty"
                 >
                   {faculties?.map((item, id) => (
-                    <option key={id}>{item.faculty}</option>
+                    <MenuItem key={id} value={item.faculty}>
+                      {item.faculty}
+                    </MenuItem>
                   ))}
-                </select>
-              </div>
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="batch"
-                  className="block text-sm font-medium text-gray-700"
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="batch">Batch</InputLabel>
+                <Select
+                  id="batch"
+                  value={selectedBatch.id}
+                  onChange={(e) => {
+                    const selectedBatchId = e.target.value;
+                    const selectedBatchData = batches.find(
+                      (teacher) => teacher._id === selectedBatchId
+                    );
+                    setSelectedBatch({
+                      id: selectedBatchId,
+                      name: selectedBatchData
+                        ? selectedBatchData.batchName
+                        : "",
+                    });
+                  }}
+                  label="Batch"
                 >
-                  Batch
-                </label>
-                <input
-                  type="text"
-                  name="batch"
-                  value={batch}
-                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                  onChange={(e) => setBatch(e.target.value)}
-                />
-              </div>
-              <div className="col-span-6 sm:col-span-3 flex gap-x-4">
-                <div className="flex-1">
-                  <label
-                    htmlFor="first-name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Class name
-                  </label>
-                  <input
-                    type="text"
-                    name="course name"
-                    value={name}
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                    onChange={(e) => setname(e.target.value)}
-                  />
-                </div>
+                  {batches?.map((item) => (
+                    <MenuItem key={item._id} value={item._id}>
+                      {item.batchName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="maxCapacity"
+                label="Max Students"
+                variant="outlined"
+                value={classData.maxCapacity}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    maxCapacity: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
 
-                <div className=" flex-1 ">
-                  <label
-                    htmlFor="last-name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Class Code
-                  </label>
-                  <input
-                    type="text"
-                    value={code}
-                    name="code"
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                    onChange={(e) =>
-                      setcode(e.target.value.toLocaleUpperCase())
-                    }
-                  />
-                </div>
-              </div>
-              <div className="col-span-6 sm:col-span-3 lg:col-span-3 flex  gap-4">
-                <div className="flex-1">
-                  <label
-                    htmlFor="city"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Credits
-                  </label>
-                  <input
-                    type="text"
-                    name="credit"
-                    value={credits}
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                    onChange={(e) => {
-                      setCredits(e.target.value);
-                    }}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label
-                    htmlFor="city"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Section
-                  </label>
-                  <input
-                    type="text"
-                    name="credit"
-                    value={section}
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                    onChange={(e) => {
-                      setSection(e.target.value);
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="col-span-6 sm:col-span-3 lg:col-span-3 flex  gap-4">
-                <div className="flex-1">
-                  <label
-                    htmlFor="start-date"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Starting Date
-                  </label>
-                  <input
-                    type="date"
-                    name="start-date"
-                    value={startDate}
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label
-                    htmlFor="end-date"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Ending Date
-                  </label>
-                  <input
-                    type="date"
-                    name="end-date"
-                    value={endDate}
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
-                    onChange={(e) => setEndDate(e.target.value)}
-                  />
-                </div>
-              </div>
-              {schedule.map((item, index) => (
-                <div key={index}>
-                  <div
-                    key={index}
-                    className="col-span-6 sm:col-span-3 lg:col-span-2"
-                  >
-                    <label className="block text-sm font-medium text-gray-700">
-                      Day of Week
-                    </label>
-                    <select
-                      name={`day-of-week-${index}`}
-                      className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      onChange={(e) =>
-                        handleDayOfWeekSelect(e.target.value, index)
-                      }
-                    >
-                      <option value="">Select a day</option>
-                      <option value="Monday">Monday</option>
-                      <option value="Tuesday">Tuesday</option>
-                      <option value="Wednesday">Wednesday</option>
-                      <option value="Thursday">Thursday</option>
-                      <option value="Friday">Friday</option>
-                      <option value="Saturday">Saturday</option>
-                      <option value="Sunday">Sunday</option>
-                    </select>
-                  </div>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="class-name"
+                label="Class name"
+                variant="outlined"
+                value={classData.name}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    name: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="class-code"
+                label="Class Code"
+                variant="outlined"
+                value={classData.code}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    code: e.target.value.toLocaleUpperCase(),
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="credits"
+                label="Credits"
+                variant="outlined"
+                value={classData.credits}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    credits: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="section"
+                label="Section"
+                variant="outlined"
+                value={classData.section}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    section: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="start-date"
+                label="Starting Date"
+                type="date"
+                variant="outlined"
+                InputLabelProps={{ shrink: true }}
+                value={classData.startDate}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    startDate: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="end-date"
+                label="Ending Date"
+                InputLabelProps={{ shrink: true }}
+                type="date"
+                variant="outlined"
+                value={classData.endDate}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    endDate: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+          <div className="mt-5">
+            <Grid container spacing={3}>
+              {classData.schedule.map((item, index) => (
+                <React.Fragment key={index}>
+                  <Grid item xs={12} sm={3}>
+                    <FormControl variant="outlined" fullWidth>
+                      <InputLabel htmlFor={`dayOfWeek-${index}`}>
+                        Day of Week
+                      </InputLabel>
+                      <Select
+                        id={`dayOfWeek-${index}`}
+                        value={item.dayOfWeek}
+                        onChange={(e) =>
+                          handleDayOfWeekSelect(e.target.value, index)
+                        }
+                        label="Day of Week"
+                      >
+                        <MenuItem value={"Monday"}>Monday</MenuItem>
+                        <MenuItem value={"Tuesday"}>Tuesday</MenuItem>
+                        <MenuItem value={"Wednesday"}>Wednesday</MenuItem>
+                        <MenuItem value={"Thursday"}>Thursday</MenuItem>
+                        <MenuItem value={"Friday"}>Friday</MenuItem>
+                        <MenuItem value={"Saturday"}>Saturday</MenuItem>
+                        <MenuItem value={"Sunday"}>Sunday</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                    <label
-                      htmlFor={`start-time-${index}`}
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Start Time
-                    </label>
-                    <input
-                      type="text"
-                      name={`start-time-${index}`}
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      id={`startTime-${index}`}
+                      label="Start Time"
+                      type="time"
+                      InputLabelProps={{ shrink: true }}
+                      variant="outlined"
                       value={item.startTime}
-                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
                       onChange={(e) =>
                         handleStartTimeChange(e.target.value, index)
                       }
+                      fullWidth
                     />
-                  </div>
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                    <label
-                      htmlFor={`end-time-${index}`}
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      End Time
-                    </label>
-                    <input
-                      type="text"
-                      name={`end-time-${index}`}
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      id={`endTime-${index}`}
+                      label="End Time"
+                      type="time"
+                      InputLabelProps={{ shrink: true }}
+                      variant="outlined"
                       value={item.endTime}
-                      className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2"
                       onChange={(e) =>
                         handleEndTimeChange(e.target.value, index)
                       }
+                      fullWidth
                     />
-                  </div>
-                  {index > 0 && (
-                    <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveSchedule(index)}
-                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  </Grid>
+                  <Grid item xs={12} sm={1}>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => handleRemoveSchedule(index)}
+                    >
+                      Remove
+                    </Button>
+                  </Grid>
+                </React.Fragment>
               ))}
-              <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                <button
-                  type="button"
-                  onClick={handleAddSchedule}
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                >
-                  Add Schedule
-                </button>
-              </div>
-            </div>
+              <Grid item xs={12}>
+                <div className="">
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={handleAddSchedule}
+                  >
+                    Add Schedule
+                  </Button>
+                </div>
+              </Grid>
+            </Grid>
           </div>
-          <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-            <button
-              type="submit"
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Save
-            </button>
+
+          <div className="mt-6">
+            <Button type="submit" variant="contained" color="primary">
+              {initialData ? "Update" : "Create"}
+            </Button>
           </div>
         </div>
       </form>

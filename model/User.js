@@ -28,8 +28,19 @@ const userSchema = new mongoose.Schema(
       enum: ["Teacher", "Student", "Admin", "Subadmin"],
       required: true,
     },
+    group: {
+      groupId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Faculty",
+      },
+      groupName: String,
+    },
     batch: {
-      type: String,
+      batchId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Batch",
+      },
+      batchName: String,
     },
     firstName: {
       type: String,

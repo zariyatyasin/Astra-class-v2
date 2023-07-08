@@ -10,9 +10,7 @@ const AddStudentSearch = ({
 }) => {
   const router = useRouter();
   const { id } = router.query;
-  const data = students?.filter((student) => {
-    return student.courses?.some((course) => course.courseeId === courseId[0]);
-  });
+  const data = students;
 
   const itemsPerPage = 6;
   const [addStudent, setAddedStudent] = useState([]);

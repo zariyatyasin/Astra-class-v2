@@ -1,42 +1,13 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const studentSchema = new mongoose.Schema(
   {
-    username: {
-      type: String,
-      required: "Please enter the username",
+    studentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: "Please enter the studentId",
       unique: true,
     },
 
-    name: {
-      type: String,
-      required: "Please enter the name",
-    },
-
-    password: {
-      type: String,
-      required: "Please enter the pssword",
-    },
-    email: {
-      type: String,
-
-      trim: true,
-      unique: true,
-    },
-    role: {
-      type: String,
-      default: "",
-      required: true,
-    },
-    faculty: {
-      type: String,
-    },
-    firstName: {
-      type: String,
-    },
-    lastName: {
-      type: String,
-    },
     phone: {
       type: String,
     },
@@ -54,92 +25,20 @@ const userSchema = new mongoose.Schema(
     currentSemester: {
       type: Number,
     },
-    enrollments: [
+
+    joinedClasses: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "EnrollCourse",
-      },
-    ],
-    class: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Class",
-      },
-    ],
-    courses: [
-      {
-        semesters: {
-          type: Number,
-        },
-        courseeId: {
+        classId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Course",
-        },
-
-        code: {
-          type: String,
-          required: true,
-        },
-        courseName: {
-          type: String,
-          required: true,
-        },
-
-        exam: [
-          {
-            examName: {
-              type: String,
-            },
-            mark: {
-              type: Number,
-            },
-          },
-        ],
-        grade: {
-          type: String,
-        },
-
-        avgAttendance: [],
-        credits: {
-          type: Number,
-        },
-        activeCourse: {
-          type: Boolean,
-          default: false,
-        },
-        finished: {
-          type: Boolean,
-          default: false,
+          ref: "Class",
         },
       },
     ],
-    attendance: {
-      type: [
-        {
-          date: {
-            type: Date,
-            required: true,
-          },
-          present: {
-            type: Boolean,
-            default: false,
-          },
-          absent: {
-            type: Boolean,
-            default: false,
-          },
-        },
-      ],
-      default: [],
-    },
+
     cgpa: {
       type: Number,
     },
 
-    emailVerified: {
-      type: Boolean,
-      default: false,
-    },
     defaultPaymentMethod: {
       type: String,
       default: "",
@@ -148,10 +47,10 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-let User;
+let Student;
 try {
-  User = mongoose.model("User");
+  Student = mongoose.model("Student");
 } catch {
-  User = mongoose.model("User", userSchema);
+  Student = mongoose.model("Student", studentSchema);
 }
-export default User;
+export default Student;

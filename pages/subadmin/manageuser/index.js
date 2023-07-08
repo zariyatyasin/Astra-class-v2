@@ -109,7 +109,6 @@ const Index = ({ user }) => {
         setUsers(updatedUsers);
         // Handle successful deletion
       } catch (error) {
-        window.confirm("You can't delete yourself");
         console.error(error.response?.data?.message);
         // Handle error during deletion
       }

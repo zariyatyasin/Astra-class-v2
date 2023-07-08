@@ -13,6 +13,8 @@ const PersonalForm = ({
   formData,
   errors,
   batch,
+  setGroupName,
+  group,
   setGetName,
 }) => {
   console.log(batch);
@@ -160,6 +162,27 @@ const PersonalForm = ({
                 <MenuItem key={item._id} value={item._id}>
                   {setGetName(item.batchName)}
                   {item.batchName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6} lg={3}>
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel id="batch-label">Group</InputLabel>
+            <Select
+              labelId="batch-label"
+              id="group"
+              name="group"
+              autoComplete="group"
+              label="Batch"
+              value={formData.group}
+              onChange={handleChange}
+            >
+              {group.map((item) => (
+                <MenuItem key={item._id} value={item._id}>
+                  {setGroupName(item.name)}
+                  {item.name}
                 </MenuItem>
               ))}
             </Select>

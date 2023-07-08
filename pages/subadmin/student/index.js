@@ -13,10 +13,12 @@ import {
 import AcademicForm from "@/components/forms/AcademicForm";
 import FamilyInfoForm from "@/components/forms/FamilyInfoForm";
 import axios from "axios";
-const Index = ({ batch }) => {
+import Faculty from "@/model/Faculty";
+const Index = ({ batch, group }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [getName, setGetName] = useState("");
+  const [getGroupName, setGroupName] = useState("");
   const initialFormData = {
     lastName: "",
     username,
@@ -30,6 +32,7 @@ const Index = ({ batch }) => {
     cellPhone: "",
     birthDate: "",
     postalCode: "",
+    group: "",
     city: "",
     street: "",
     examType: "",
@@ -53,7 +56,9 @@ const Index = ({ batch }) => {
 
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState(initialErrors);
+
   console.log("this si mat", formData.batch, getName);
+
   const resetForm = () => {
     setFormData(initialFormData);
     setErrors(initialErrors);
@@ -70,18 +75,31 @@ const Index = ({ batch }) => {
     if (!lastName) {
       errors.lastName = "Last name is required";
     }
+    const requestBody = {
+      name: formData.name,
+      username: username,
+      password: password,
+      role: formData.role,
+      email: formData.email,
+    };
 
+    if (formData.batch) {
+      requestBody.batch = {
+        batchId: formData.batch,
+        batchName: getName,
+      };
+    }
+
+    if (formData.group) {
+      requestBody.group = {
+        groupId: formData.group,
+        groupName: getGroupName,
+      };
+    }
     try {
       const response = await axios.post(
         "http://localhost:3000/api/auth/signup",
-        {
-          name: formData.name,
-          username: username,
-          password: password,
-          role: formData.role,
-          batch: formData.batch,
-          email: formData.email,
-        }
+        requestBody
       );
 
       if (response.status === 200) {
@@ -203,6 +221,8 @@ const Index = ({ batch }) => {
                     <PersonalForm
                       handleChange={handleChange}
                       batch={batch}
+                      group={group}
+                      setGroupName={setGroupName}
                       formData={formData}
                       setGetName={setGetName}
                       errors={errors}
@@ -341,10 +361,12 @@ export default Index;
 export async function getServerSideProps(context) {
   connectDb();
   const batch = await Batch.find({}).sort({ updatedAt: -1 }).lean();
+  const group = await Faculty.find({}).sort({ updatedAt: -1 }).lean();
 
   return {
     props: {
       batch: JSON.parse(JSON.stringify(batch)),
+      group: JSON.parse(JSON.stringify(group)),
     },
   };
 }

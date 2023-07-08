@@ -1,546 +1,829 @@
-<div className=" ">
-  <div className=" ">
-    <h2 className="text-2xl font-bold mb-4">Register</h2>
-    {/*
-    <div className="mb-4">
-      <label className="block mb-1 font-bold" htmlFor="role"> Role: </label>
-      <select
-        className="block w-full border border-gray-300 p-2"
-        id="role"
-        name="role"
-        value="{role}"
-        onChange="{handleRoleChange}"
-      >
-        <option value="">Select Role</option>
-        <option value="teacher">Teacher</option>
-        <option value="student">Student</option>
-      </select>
-    </div>
-    */}
-    <div className=" ">
-      {/* Add common form fields here */} {/*
-      <div className="mb-4">
-        <label className="block mb-1 font-bold" htmlFor="email"> Email: </label>
-        <input
-          className="block w-full border border-gray-300 p-2"
-          type="email"
-          id="email"
-          name="email"
-          value="{formData.email}"
-          onChange="{handleInputChange}"
-        />
-      </div>
-      */}
-      <PersonalForm />
-      {/* Add more common fields here */}
-    </div>
-    {role === "teacher" && (
-    <div>
-      <h3 className="text-lg font-bold mb-2">Teacher Form</h3>
-      {/* Add teacher-specific form fields here */}
-      <div className="mb-4">
-        <label className="block mb-1 font-bold" htmlFor="name"> Name: </label>
-        <input
-          className="block w-full border border-gray-300 p-2"
-          type="text"
-          id="name"
-          name="name"
-          value="{formData.name}"
-          onChange="{handleInputChange}"
-        />
-      </div>
-      {/* Add more teacher-specific fields here */}
-    </div>
-    )} {role === "student" && (
-    <div>
-      <h3 className="text-lg font-bold mb-2">Student Form</h3>
-      {/* Add student-specific form fields here */}
-      <div className="mb-4">
-        <label className="block mb-1 font-bold" htmlFor="name"> Name: </label>
-        <input
-          className="block w-full border border-gray-300 p-2"
-          type="text"
-          id="name"
-          name="name"
-          value="{formData.name}"
-          onChange="{handleInputChange}"
-        />
-      </div>
-      {/* Add more student-specific fields here */}
-    </div>
-    )}
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import axios from "axios";
+import {
+  Grid,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import SelectInputFromData from "@/components/inputs/SelectInputCourse";
 
-    <div className="mt-4">
-      <button
-        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-        onClick="{handleSubmit}"
-      >
-        Register
-      </button>
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-///
-
-
-
-import React from "react";
-
-const PersonalForm = ({ handleInputChange, formData, formErrors }) => {
-  return (
-    <div>
-      <div className="mt-10 sm:mt-0">
-        <div className=" ">
-          <div className="mt-5 md:mt-0 md:col-span-2">
-            <div className="   ">
-              <div className=" ">
-                <div className="grid grid-cols-6 gap-6">
-                  <div className="col-span-6 sm:col-span-3">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      First name
-                    </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      id="firstName"
-                      value={formData.firstName}
-                      autoComplete="given-name"
-                      className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      onChange={handleInputChange}
-                    />
-                    {formErrors.firstName &&
-                      formData.firstName.trim().length === 0 && (
-                        <p className="text-red-500">{formErrors.firstName}</p>
-                      )}
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-3">
-                    <label
-                      htmlFor="last-name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Last name
-                    </label>
-                    <input
-                      type="text"
-                      name="last-name"
-                      id="last-name"
-                      autoComplete="family-name"
-                      className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-3">
-                    <label
-                      htmlFor="email-address"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Email address
-                    </label>
-                    <input
-                      type="text"
-                      name="email-address"
-                      id="email-address"
-                      autoComplete="email"
-                      className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-3">
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Gender
-                    </label>
-                    <select
-                      id="country"
-                      name="country"
-                      autoComplete="country-name"
-                      className="mt-1 block w-full  px-3   border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 py-2 border focus:border-indigo-500 sm:text-sm"
-                    >
-                      <option>Male</option>
-                      <option>Female</option>
-                    </select>
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-6 lg:col-span-2">
-                    <label
-                      htmlFor="city"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Cell Phone
-                    </label>
-                    <input
-                      type="text"
-                      name="city"
-                      id="city"
-                      autoComplete="address-level2"
-                      className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                    <label
-                      htmlFor="region"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Birth Date
-                    </label>
-                    <input
-                      type="text"
-                      name="region"
-                      id="region"
-                      autoComplete="address-level1"
-                      className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                    <label
-                      htmlFor="postal-code"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      ZIP / Postal code
-                    </label>
-                    <input
-                      type="text"
-                      name="postal-code"
-                      id="postal-code"
-                      autoComplete="postal-code"
-                      className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-3">
-                    <label
-                      htmlFor="postal-code"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      City
-                    </label>
-                    <input
-                      type="text"
-                      name="postal-code"
-                      id="postal-code"
-                      autoComplete="postal-code"
-                      className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div className="col-span-6 sm:col-span-3 lg:col-span-3">
-                    <label
-                      htmlFor="postal-code"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Street
-                    </label>
-                    <input
-                      type="text"
-                      name="postal-code"
-                      id="postal-code"
-                      autoComplete="postal-code"
-                      className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default PersonalForm;
-import React, { useEffect, useState } from "react";
-
-import AdminLayout from "@/components/SubAdmin/layout/AdminLayout";
-import PersonalForm from "@/components/form/PersonalForm";
-import AcademicForm from "@/components/forms/AcademicForm";
-import FamilyInfoForm from "@/components/forms/FamilyInfoForm";
-
-const Index = ({ user }) => {
-  const [role, setRole] = useState("");
-
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+const CreateClassForm = ({
+  teachers,
+  courses,
+  faculties,
+  setData,
+  setModelOpen,
+}) => {
+  const [classData, setClassData] = useState({
     name: "",
-    email: "",
-    gender: "",
-    cellPhone: "",
-    birthDate: "",
-    postalCode: "",
-    city: "",
-    street: "",
-    examType: "",
-    institutions: "",
-    fieldOfStudy: "",
-    qualificationDate: "",
-    gpa: "",
-    fatherFullName: "",
-    fatherOccupation: "",
-    fatherPhone: "",
-    motherFullName: "",
-    motherOccupation: "",
-    motherPhone: "",
+    code: "",
+    description: "",
+    faculty: faculties[0]?.faculty,
+    credits: "",
+    section: "",
+    course: "",
+    teacher: "",
+    startDate: "",
+    endDate: "",
+    batch: "",
+    schedule: [],
   });
 
-  const [formErrors, setFormErrors] = useState({
-    role: "",
-    firstName: "",
-  });
-  const validateForm = () => {
-    let isValid = true;
-    const newFormErrors = {};
-
-    // Validate Role
-    if (!role) {
-      newFormErrors.role = "Please select a role.";
-      isValid = false;
-    }
-
-    // Validate First Name
-    if (!formData.firstName) {
-      newFormErrors.firstName = "Please enter a first name.";
-      isValid = false;
-    }
-
-    setFormErrors(newFormErrors);
-    return isValid;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData.firstName);
-    if (validateForm()) {
-      console.log(formData);
-      // Perform form submission
-    }
-  };
-
-  const handleRoleChange = (e) => {
-    setRole(e.target.value);
-    validateForm();
-  };
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+  const handleDayOfWeekSelect = (selectedDayOfWeek, index) => {
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
+      updatedSchedule[index] = {
+        ...updatedSchedule[index],
+        dayOfWeek: selectedDayOfWeek,
+      };
+      return { ...prevData, schedule: updatedSchedule };
     });
-    validateForm();
-    setFormErrors({ ...formErrors, firstName: "" });
+  };
+
+  const handleStartTimeChange = (startTime, index) => {
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
+      updatedSchedule[index] = {
+        ...updatedSchedule[index],
+        startTime,
+      };
+      return { ...prevData, schedule: updatedSchedule };
+    });
+  };
+
+  const handleEndTimeChange = (endTime, index) => {
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
+      updatedSchedule[index] = {
+        ...updatedSchedule[index],
+        endTime,
+      };
+      return { ...prevData, schedule: updatedSchedule };
+    });
+  };
+
+  const handleAddSchedule = () => {
+    setClassData((prevData) => ({
+      ...prevData,
+      schedule: [
+        ...prevData.schedule,
+        { dayOfWeek: "", startTime: "", endTime: "" },
+      ],
+    }));
+  };
+
+  const handleRemoveSchedule = (index) => {
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
+      updatedSchedule.splice(index, 1);
+      return { ...prevData, schedule: updatedSchedule };
+    });
+  };
+
+  const handleCourseSelect = (selectedCourse) => {
+    setClassData((prevData) => ({ ...prevData, course: selectedCourse }));
+  };
+
+  const handleTeacherSelect = (selectedTeacher) => {
+    setClassData((prevData) => ({ ...prevData, teacher: selectedTeacher }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const { data } = await axios.post(
+        "http://localhost:3000/api/subadmin/createclass",
+        classData
+      );
+
+      setData(Array.isArray(data.class) ? data.class : []);
+      setClassData({
+        name: "",
+        code: "",
+        description: "",
+        faculty: faculties[0]?.faculty,
+        credits: "",
+        section: "",
+        course: "",
+        teacher: "",
+        startDate: "",
+        endDate: "",
+        batch: "",
+        schedule: [],
+      });
+      setModelOpen(false);
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response.data.message);
+    }
   };
 
   return (
-    <AdminLayout>
-      <div className="min-h-full">
-        <div>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Profile
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            This information will be displayed publicly so be careful what you
-            share.
-          </p>
-        </div>
-
-        <div className=" py-6">
-          <div className="max-w-3xl bg-white shadow rounded-lg py-4 mx-auto   sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
-            <div className="flex items-center bg-white space-x-5">
-              <div className="flex-shrink-0">
-                <div className="relative">
-                  <img
-                    className="h-16 w-16 rounded-full"
-                    src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    alt=""
-                  />
-                  <span
-                    className="absolute inset-0 shadow-inner rounded-full"
-                    aria-hidden="true"
-                  ></span>
-                </div>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Add Photo</h1>
-                <button
-                  type="button"
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div className="px-4 py-5 bg-white sm:p-6">
+          <h2 className="text-2xlmb-6 font-semibold tracking-tight text-gray-900sm:text-3xl">
+            Create Class
+          </h2>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <SelectInputFromData
+                itemName={"Course"}
+                setname={setName}
+                data={courses}
+                onSelect={handleCourseSelect}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="description"
+                label="Description"
+                variant="outlined"
+                value={classData.description}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    description: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <SelectInputFromData
+                itemName={"Add Teacher"}
+                data={teachers}
+                onSelect={handleTeacherSelect}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="faculty">Faculty</InputLabel>
+                <Select
+                  id="faculty"
+                  value={classData.faculty}
+                  onChange={(e) =>
+                    setClassData({
+                      ...classData,
+                      faculty: e.target.value,
+                    })
+                  }
+                  label="Faculty"
                 >
-                  Upload
-                </button>
-              </div>
-            </div>
-            <div className="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
-              <button
-                type="button"
-                className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
-              >
-                Disqualify
-              </button>
-              <button
-                type="button"
-                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
-              >
-                Advance to offer
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-6 max-w-3xl   mx-auto grid grid-cols-1 gap-6   lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
-            <div className="space-y-6 lg:col-start-1 lg:col-span-2">
-              <section aria-labelledby="applicant-information-title">
-                <div className="bg-white shadow sm:rounded-lg">
-                  <div className="px-4 py-5 sm:px-6">
-                    <h2
-                      id="applicant-information-title"
-                      className="text-lg leading-6 font-medium text-gray-900"
+                  {faculties?.map((item, id) => (
+                    <MenuItem key={id} value={item.faculty}>
+                      {item.faculty}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="batch"
+                label="Batch"
+                variant="outlined"
+                value={classData.batch}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    batch: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="class-name"
+                label="Class name"
+                variant="outlined"
+                value={classData.name}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    name: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="class-code"
+                label="Class Code"
+                variant="outlined"
+                value={classData.code}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    code: e.target.value.toLocaleUpperCase(),
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="credits"
+                label="Credits"
+                variant="outlined"
+                value={classData.credits}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    credits: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="section"
+                label="Section"
+                variant="outlined"
+                value={classData.section}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    section: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="start-date"
+                label="Starting Date"
+                type="date"
+                variant="outlined"
+                InputLabelProps={{ shrink: true }}
+                value={classData.startDate}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    startDate: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="end-date"
+                label="Ending Date"
+                InputLabelProps={{ shrink: true }}
+                type="date"
+                variant="outlined"
+                value={classData.endDate}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    endDate: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            {classData.schedule.map((item, index) => (
+              <React.Fragment key={index}>
+                <Grid item xs={12} sm={4}>
+                  <FormControl variant="outlined" fullWidth>
+                    <InputLabel htmlFor={`dayOfWeek-${index}`}>
+                      Day of Week
+                    </InputLabel>
+                    <Select
+                      id={`dayOfWeek-${index}`}
+                      value={item.dayOfWeek}
+                      onChange={(e) =>
+                        handleDayOfWeekSelect(e.target.value, index)
+                      }
+                      label="Day of Week"
                     >
-                      Applicant Information
-                    </h2>
-                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                      Personal details and application.
-                    </p>
-                  </div>
-                  <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                    <PersonalForm
-                      handleInputChange={handleInputChange}
-                      formData={formData}
-                      formErrors={formErrors}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section aria-labelledby="notes-title">
-                <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">
-                  <div className="divide-y divide-gray-200">
-                    <div className="px-4 py-5 sm:px-6">
-                      <h2
-                        id="notes-title"
-                        className="text-lg font-medium text-gray-900"
-                      >
-                        Academic Information
-                      </h2>
-                    </div>
-                    <div className="px-4 py-6 sm:px-6">now</div>
-                  </div>
-                </div>
-              </section>
-              <section aria-labelledby="notes-title">
-                <div className="bg-white shadow sm:rounded-lg sm:overflow-hidden">
-                  <div className="divide-y divide-gray-200">
-                    <div className="px-4 py-5 sm:px-6">
-                      <h2
-                        id="notes-title"
-                        className="text-lg font-medium text-gray-900"
-                      >
-                        Family Information
-                      </h2>
-                    </div>
-                    <div className="px-4 py-6 sm:px-6">then</div>
-                  </div>
-                </div>
-              </section>
-            </div>
-
-            <section
-              aria-labelledby="timeline-title"
-              className="lg:col-start-3 lg:col-span-1"
-            >
-              <div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
-                <h2
-                  id="timeline-title"
-                  className="text-lg font-medium text-gray-900"
-                >
-                  User Info
-                </h2>
-
-                <div className="mt-6 flow-root">
-                  <div className="grid grid-cols-6 gap-6">
-                    <div className="col-span-6 sm:col-span-6">
-                      <label
-                        htmlFor="first-name"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Username
-                      </label>
-                      <input
-                        type="text"
-                        name="first-name"
-                        id="first-name"
-                        autoComplete="given-name"
-                        className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-
-                    <div className="col-span-6 sm:col-span-6">
-                      <label
-                        htmlFor="last-name"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Password
-                      </label>
-                      <input
-                        type="text"
-                        name="last-name"
-                        id="last-name"
-                        autoComplete="family-name"
-                        className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-
-                    <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                      <label
-                        htmlFor="region"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Occupation
-                      </label>
-                      <input
-                        type="text"
-                        name="region"
-                        id="region"
-                        autoComplete="address-level1"
-                        className="mt-1 focus:ring-indigo-500 py-2 border focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 flex flex-col justify-stretch">
-                  <button
-                    type="submit"
-                    onClick={handleSubmit}
-                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      {/* Add options for day of week */}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    id={`startTime-${index}`}
+                    label="Start Time"
+                    type="time"
+                    InputLabelProps={{ shrink: true }}
+                    variant="outlined"
+                    value={item.startTime}
+                    onChange={(e) =>
+                      handleStartTimeChange(e.target.value, index)
+                    }
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    id={`endTime-${index}`}
+                    label="End Time"
+                    type="time"
+                    variant="outlined"
+                    value={item.endTime}
+                    onChange={(e) => handleEndTimeChange(e.target.value, index)}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={1}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => handleRemoveSchedule(index)}
                   >
-                    Register
-                  </button>
-                </div>
-              </div>
-            </section>
+                    Remove
+                  </Button>
+                </Grid>
+              </React.Fragment>
+            ))}
+            <Grid item xs={12}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleAddSchedule}
+              >
+                Add Schedule
+              </Button>
+            </Grid>
+          </Grid>
+
+          <div className="mt-6">
+            <Button type="submit" variant="contained" color="primary">
+              Create
+            </Button>
           </div>
         </div>
-      </div>
-    </AdminLayout>
+      </form>
+    </div>
   );
 };
 
-export default Index;
+export default CreateClassForm;
+
+
+
+
+
+
+//////////////////////////////////////
+
+
+
+
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import axios from "axios";
+import {
+  Grid,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import SelectInputFromData from "@/components/inputs/SelectInputCourse";
+
+const CreateClassForm = ({
+  teachers,
+  courses,
+  faculties,
+
+  batches,
+  setData,
+  setModelOpen,
+}) => {
+  const [selectedTeacher, setSelectedTeacher] = useState({ id: "", name: "" });
+  const [selectedBatch, setSelectedBatch] = useState({ id: "", name: "" });
+
+  const [classData, setClassData] = useState({
+    name: "",
+    code: "",
+    description: "",
+    faculty: faculties[0]?.faculty,
+    credits: "",
+    section: "",
+    course: courses[0]?.id,
+
+    startDate: "",
+    endDate: "",
+
+    schedule: [],
+  });
+
+  console.log(classData, selectedBatch);
+  const handleDayOfWeekSelect = (selectedDayOfWeek, index) => {
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
+      updatedSchedule[index] = {
+        ...updatedSchedule[index],
+        dayOfWeek: selectedDayOfWeek,
+      };
+      return { ...prevData, schedule: updatedSchedule };
+    });
+  };
+
+  const handleStartTimeChange = (startTime, index) => {
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
+      updatedSchedule[index] = {
+        ...updatedSchedule[index],
+        startTime,
+      };
+      return { ...prevData, schedule: updatedSchedule };
+    });
+  };
+
+  const handleEndTimeChange = (endTime, index) => {
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
+      updatedSchedule[index] = {
+        ...updatedSchedule[index],
+        endTime,
+      };
+      return { ...prevData, schedule: updatedSchedule };
+    });
+  };
+
+  const handleAddSchedule = () => {
+    setClassData((prevData) => ({
+      ...prevData,
+      schedule: [
+        ...prevData.schedule,
+        { dayOfWeek: "", startTime: "", endTime: "" },
+      ],
+    }));
+  };
+
+  const handleRemoveSchedule = (index) => {
+    setClassData((prevData) => {
+      const updatedSchedule = [...prevData.schedule];
+      updatedSchedule.splice(index, 1);
+      return { ...prevData, schedule: updatedSchedule };
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const { data } = await axios.post(
+        "http://localhost:3000/api/subadmin/createclass",
+        classData
+      );
+
+      setData(Array.isArray(data.class) ? data.class : []);
+      setClassData({
+        name: "",
+        code: "",
+        description: "",
+        faculty: faculties[0]?.faculty,
+        credits: "",
+        section: "",
+        course: "",
+        teacher: "",
+        startDate: "",
+        endDate: "",
+        batch: "",
+        schedule: [],
+      });
+      setModelOpen(false);
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response.data.message);
+    }
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div className="px-4 py-5 bg-white sm:p-6">
+          <h2 className="text-2xlmb-6 font-semibold tracking-tight text-gray-900sm:text-3xl">
+            Create Class
+          </h2>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="course">Course</InputLabel>
+                <Select
+                  id="course"
+                  value={classData.course ?? ""}
+                  onChange={(e) =>
+                    setClassData({
+                      ...classData,
+                      course: e.target.value,
+                    })
+                  }
+                  label="Course"
+                >
+                  {courses?.map((item, id) => (
+                    <MenuItem key={id} value={item.name}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="description"
+                label="Description"
+                variant="outlined"
+                value={classData.description}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    description: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="teacher">Add Teacher</InputLabel>
+                <Select
+                  id="teacher"
+                  value={selectedTeacher.id}
+                  onChange={(e) => {
+                    const selectedTeacherId = e.target.value;
+                    const selectedTeacherData = teachers.find(
+                      (teacher) => teacher._id === selectedTeacherId
+                    );
+                    setSelectedTeacher({
+                      id: selectedTeacherId,
+                      name: selectedTeacherData ? selectedTeacherData.name : "",
+                    });
+                  }}
+                  label="Add Teacher"
+                >
+                  {teachers?.map((item) => (
+                    <MenuItem key={item._id} value={item._id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="faculty">Faculty</InputLabel>
+                <Select
+                  id="faculty"
+                  value={classData.faculty ?? " "}
+                  onChange={(e) =>
+                    setClassData({
+                      ...classData,
+                      faculty: e.target.value,
+                    })
+                  }
+                  label="Faculty"
+                >
+                  {faculties?.map((item, id) => (
+                    <MenuItem key={id} value={item.faculty}>
+                      {item.faculty}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="batch">Batch</InputLabel>
+                <Select
+                  id="batch"
+                  value={selectedBatch.id}
+                  onChange={(e) => {
+                    const selectedBatchId = e.target.value;
+                    const selectedBatchData = batches.find(
+                      (teacher) => teacher._id === selectedBatchId
+                    );
+                    setSelectedBatch({
+                      id: selectedBatchId,
+                      name: selectedBatchData
+                        ? selectedBatchData.batchName
+                        : "",
+                    });
+                  }}
+                  label="Batch"
+                >
+                  {batches?.map((item) => (
+                    <MenuItem key={item._id} value={item._id}>
+                      {item.batchName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            {/* <Grid item xs={12} sm={6}>
+              <TextField
+                id="batch"
+                label="Batch"
+                variant="outlined"
+                value={classData.batch}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    batch: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid> */}
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="class-name"
+                label="Class name"
+                variant="outlined"
+                value={classData.name}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    name: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="class-code"
+                label="Class Code"
+                variant="outlined"
+                value={classData.code}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    code: e.target.value.toLocaleUpperCase(),
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="credits"
+                label="Credits"
+                variant="outlined"
+                value={classData.credits}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    credits: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="section"
+                label="Section"
+                variant="outlined"
+                value={classData.section}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    section: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="start-date"
+                label="Starting Date"
+                type="date"
+                variant="outlined"
+                InputLabelProps={{ shrink: true }}
+                value={classData.startDate}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    startDate: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <TextField
+                id="end-date"
+                label="Ending Date"
+                InputLabelProps={{ shrink: true }}
+                type="date"
+                variant="outlined"
+                value={classData.endDate}
+                onChange={(e) =>
+                  setClassData({
+                    ...classData,
+                    endDate: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            {classData.schedule.map((item, index) => (
+              <React.Fragment key={index}>
+                <Grid item xs={12} sm={4}>
+                  <FormControl variant="outlined" fullWidth>
+                    <InputLabel htmlFor={`dayOfWeek-${index}`}>
+                      Day of Week
+                    </InputLabel>
+                    <Select
+                      id={`dayOfWeek-${index}`}
+                      value={item.dayOfWeek}
+                      onChange={(e) =>
+                        handleDayOfWeekSelect(e.target.value, index)
+                      }
+                      label="Day of Week"
+                    >
+                      <MenuItem value={1}>Monday</MenuItem>
+                      <MenuItem value={2}>Tuesday</MenuItem>
+                      <MenuItem value={3}>Wednesday</MenuItem>
+                      <MenuItem value={4}>Thursday</MenuItem>
+                      <MenuItem value={5}>Friday</MenuItem>
+                      <MenuItem value={6}>Saturday</MenuItem>
+                      <MenuItem value={7}>Sunday</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    id={`startTime-${index}`}
+                    label="Start Time"
+                    type="time"
+                    InputLabelProps={{ shrink: true }}
+                    variant="outlined"
+                    value={item.startTime}
+                    onChange={(e) =>
+                      handleStartTimeChange(e.target.value, index)
+                    }
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    id={`endTime-${index}`}
+                    label="End Time"
+                    type="time"
+                    variant="outlined"
+                    value={item.endTime}
+                    onChange={(e) => handleEndTimeChange(e.target.value, index)}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={1}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => handleRemoveSchedule(index)}
+                  >
+                    Remove
+                  </Button>
+                </Grid>
+              </React.Fragment>
+            ))}
+            <Grid item xs={12}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleAddSchedule}
+              >
+                Add Schedule
+              </Button>
+            </Grid>
+          </Grid>
+
+          <div className="mt-6">
+            <Button type="submit" variant="contained" color="primary">
+              Create
+            </Button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default CreateClassForm;

@@ -31,8 +31,6 @@ const index = ({ students }) => {
     fetchData();
   }, [id, modelOpen]);
 
-  console.log("prev", studentList);
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -164,7 +162,7 @@ export default index;
 export async function getServerSideProps(context) {
   connectDb();
 
-  const students = await User.find({ role: "student" })
+  const students = await User.find({ role: "Student" })
     .sort({ updatedAt: -1 })
     .lean();
 

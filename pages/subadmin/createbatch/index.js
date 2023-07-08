@@ -32,8 +32,6 @@ const Index = ({ batch }) => {
     handleClose();
   };
 
-  console.log(data);
-
   return (
     <div>
       <AdminLayout>

@@ -27,8 +27,13 @@ const ClassSchema = new mongoose.Schema(
       type: String,
     },
     teacher: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      teacherId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Teacher",
+        required: true,
+        unique: true,
+      },
+      teacherName: String,
     },
     students: [
       {
