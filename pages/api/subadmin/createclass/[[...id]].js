@@ -1,5 +1,8 @@
 import Class from "@/model/Class";
 import User from "@/model/User";
+import Student from "@/model/Student";
+import Teacher from "@/model/Teacher";
+
 import { connectDb, disconnectDb } from "@/utils/db";
 import mongoose from "mongoose";
 import nc from "next-connect";
@@ -20,7 +23,7 @@ handler.post(async (req, res) => {
     } = req.body;
     const upperCode = code?.toUpperCase();
 
-    if (!name || !code || !credits || !faculty || !section) {
+    if (!name || !code || !faculty || !section) {
       res.status(400).json({ message: "Please fill in all fields" });
       return;
     }
@@ -41,6 +44,25 @@ handler.post(async (req, res) => {
     });
 
     await SaveClass.save();
+    const teacherId = req.body.teacher.teacherId;
+    // const existingTeacherClass = teacherDocument.classes.find(
+    //   (cls) => cls.classId.toString() === SaveClass._id.toString()
+    // );
+
+    // if (existingTeacherClass) {
+    //   res.status(400).json({ message: "Teacher is already taking this class" });
+    //   return;
+    // }
+
+    const teacherDocument = await Teacher.findOne({ teacherId });
+
+    if (!teacherDocument) {
+      res.status(404).json({ message: "Teacher not found" });
+      return;
+    }
+
+    teacherDocument.classes.push({ classId: SaveClass._id });
+    await teacherDocument.save();
     disconnectDb();
     return res.json({
       message: "Class has been create successfuly",
@@ -76,64 +98,46 @@ handler.get(async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 });
-
 handler.put(async (req, res) => {
   try {
-    connectDb();
+    const { studentId, classId } = req.body;
 
-    const studentId = req.body.id;
-    const classId = req.query.id;
-    const studentName = req.body.studentName;
-    const studentRoll = req.body.studentRoll;
+    const existStudent = await Student.findOne({ studentId: studentId });
 
-    const existStudent = await User.findById(studentId);
     const existClass = await Class.findById(classId);
 
-    if (existClass) {
+    if (existClass && existStudent) {
       const studentIndex = existClass.students.findIndex(
         (student) => student.studentId.toString() === studentId.toString()
       );
 
       if (studentIndex === -1) {
-        await existClass.updateOne({
-          $push: {
-            students: {
-              studentId,
-              studentName,
-              studentRoll,
-            },
-          },
-        });
+        existClass.students.push({ studentId });
+        await existClass.save();
 
-        if (!existStudent.class.includes(classId)) {
-          await existStudent.updateOne({
-            $push: { class: classId },
-          });
+        if (!existStudent.joinedClasses.includes(classId)) {
+          existStudent.joinedClasses.push({ classId });
+          await existStudent.save();
         }
       } else {
-        await existClass.updateOne({
-          $pull: {
-            students: {
-              studentId,
-              studentName,
-              studentRoll,
-            },
-          },
-        });
+        existClass.students.splice(studentIndex, 1);
+        await existClass.save();
+
         const classIdStr = classId.toString();
-        const classIds = existStudent.class.map((id) => id.toString());
-        console.log(classIds.includes(classIdStr));
+        const classIds = existStudent.joinedClasses.map((cls) =>
+          cls.classId.toString()
+        );
+
         if (classIds.includes(classIdStr)) {
-          await existStudent.updateOne({
-            $pull: { class: classIdStr },
-          });
+          existStudent.joinedClasses = existStudent.joinedClasses.filter(
+            (cls) => cls.classId.toString() !== classIdStr
+          );
+          await existStudent.save();
         }
       }
     } else {
       return res.status(500).json({ message: "Class does not exist" });
     }
-
-    disconnectDb();
 
     return res.json(existClass);
   } catch (error) {

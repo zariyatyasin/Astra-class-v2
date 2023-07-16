@@ -26,7 +26,7 @@ const index = ({ teachers, courses, faculties, classes, batches }) => {
   ];
   const [modelOpen, setModelOpen] = useState(false);
   const [data, setData] = useState(classes);
-  console.log(classes);
+
   return (
     <AdminLayout>
       <CreateClassModel

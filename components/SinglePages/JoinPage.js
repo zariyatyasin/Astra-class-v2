@@ -20,7 +20,6 @@ const JoinPage = () => {
 
   const handleJoinClassroom = () => {
     // Handle the join classroom logic here
-    console.log("Joining classroom with code:", classroomCode);
 
     // Close the modal
     handleModalClose();

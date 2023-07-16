@@ -64,13 +64,12 @@ const CreateBatchForm = ({ initialData, setData, setOpen }) => {
           });
 
       const responseData = response.data;
-      console.log(responseData);
+
       setData(responseData.batch);
       setOpen(false);
 
       toast.success(responseData.message);
     } catch (error) {
-      console.log(error);
       toast.error(error?.response?.data?.message);
     }
   };

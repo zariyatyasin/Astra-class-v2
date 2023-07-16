@@ -13,8 +13,6 @@ const EnrollmentSubadmin = ({ faculties, accessEnrollment }) => {
   const [name, setName] = useState("");
   const [description, setdescription] = useState("");
 
-  console.log(accessEnrollment);
-
   const [onHoverOpen, setOnHoverOpen] = useState(false);
   const [date, setDate] = useState([
     {
@@ -23,8 +21,6 @@ const EnrollmentSubadmin = ({ faculties, accessEnrollment }) => {
       key: "selection",
     },
   ]);
-
-  console.log(date[0].endDate);
 
   const handleToggle = () => {
     setenrollmentActive((prevState) => !prevState);

@@ -10,19 +10,19 @@ export async function middleware(req) {
     secureCookie: process.env.NODE_ENV === "production",
   });
 
-  if (pathname.startsWith("/Admin")) {
+  if (pathname.startsWith("/admin")) {
     if (!session) return NextResponse.redirect(`http://localhost:3000/login`);
     if (session.role !== "Admin") return NextResponse.redirect(`${origin}`);
   }
-  if (pathname.startsWith("/Subadmin")) {
+  if (pathname.startsWith("/subadmin")) {
     if (!session) return NextResponse.redirect(`http://localhost:3000/login`);
     if (session.role !== "Subadmin") return NextResponse.redirect(`${origin}`);
   }
-  if (pathname.startsWith("/Student")) {
+  if (pathname.startsWith("/student")) {
     if (!session) return NextResponse.redirect(`http://localhost:3000/login`);
     if (session.role !== "Student") return NextResponse.redirect(`${origin}`);
   }
-  if (pathname.startsWith("/Teacher")) {
+  if (pathname.startsWith("/teacher")) {
     if (!session) return NextResponse.redirect(`http://localhost:3000/login`);
     if (session.role !== "Teacher") return NextResponse.redirect(`${origin}`);
   }

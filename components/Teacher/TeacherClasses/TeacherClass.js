@@ -73,14 +73,6 @@ export const TeacherClass = ({ classes }) => {
               section={cls.section}
               date={cls.createdAt}
             />
-            {/* <div>
-              <h2 className="text-lg font-semibold">{cls.name}</h2>
-              <p className="mt-2">{cls.description}</p>
-            </div>
-            <div className="mt-4 flex justify-between">
-              <p className="font-medium">{cls.teacher}</p>
-              <p className="font-medium">{cls.students.length} Students</p>
-            </div> */}
           </div>
         ))}
       </div>

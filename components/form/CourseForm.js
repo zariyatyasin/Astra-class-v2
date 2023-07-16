@@ -23,7 +23,7 @@ const CoursehtmlForm = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("this is pree", prerequisites);
+
     try {
       const { data } = await axios.post("/api/subadmin/course", {
         name,
@@ -43,7 +43,6 @@ const CoursehtmlForm = ({
       setCredits("");
       setModelOpen(false);
       toast.success(data.message);
-      console.log("work");
     } catch (error) {
       toast.error(error.response.data.message);
     }

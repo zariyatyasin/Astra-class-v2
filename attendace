@@ -97,7 +97,7 @@ export default function Attendance({ courseId, addedStudents }) {
       },
     }));
 
-    console.log("new stu", studentAttendanceData);
+    
   };
 
   const markAllPresent = () => {
@@ -332,8 +332,7 @@ export default function Attendance({ courseId, addedStudents }) {
         absent: !student.present,
       },
     }));
-
-    console.log("new stu", studentAttendanceData);
+ 
   };
 
   const markAllPresent = () => {

@@ -30,10 +30,7 @@ const ClassSchema = new mongoose.Schema(
       teacherId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Teacher",
-        required: true,
-        unique: true,
       },
-      teacherName: String,
     },
     students: [
       {
@@ -41,8 +38,6 @@ const ClassSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Student",
         },
-        studentName: String,
-        studentRoll: String,
       },
     ],
     batch: {
@@ -50,7 +45,6 @@ const ClassSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Batch",
         required: true,
-        unique: true,
       },
       batchName: String,
     },

@@ -23,8 +23,6 @@ const UpdateCourseForm = ({
   );
   const [amount, setAmount] = useState(1);
 
-  console.log(selectedRow);
-
   useEffect(() => {
     setAmount(credits * 3000);
   }, [credits]);

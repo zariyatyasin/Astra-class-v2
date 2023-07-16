@@ -7,6 +7,7 @@ import nc from "next-connect";
 import { createActivationToken } from "@/utils/tokens";
 import User from "@/model/User";
 import Student from "@/model/Student";
+import Teacher from "@/model/Teacher";
 import auth from "@/middleware/auth";
 
 const handler = nc().use(auth);
@@ -36,6 +37,9 @@ handler.post(async (req, res) => {
     if (role === "Student") {
       const newStudent = new Student({ ...req.body, studentId: newUser._id });
       addedUser = await Promise.all([newUser.save(), newStudent.save()]);
+    } else if (role === "Teacher") {
+      const newTeacher = new Teacher({ ...req.body, teacherId: newUser._id });
+      addedUser = await Promise.all([newUser.save(), newTeacher.save()]);
     } else {
       addedUser = await newUser.save();
     }

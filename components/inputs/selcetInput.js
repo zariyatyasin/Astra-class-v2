@@ -10,14 +10,11 @@ const SelcetInput = ({ setPrerequisites, data, itemName }) => {
     setSearchQuery(event.target.value);
     setIsOpen(true);
   };
-  console.log(selectedValue);
 
   const handleItemClick = (item) => {
     setSelectedValue(item);
     setSearchQuery(item);
     setIsOpen(false);
-
-    console.log("new", item);
   };
   const filteredData = data?.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())

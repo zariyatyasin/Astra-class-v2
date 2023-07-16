@@ -23,7 +23,7 @@ const CreateClassForm = ({
 }) => {
   const [selectedTeacher, setSelectedTeacher] = useState({ id: "", name: "" });
   const [selectedBatch, setSelectedBatch] = useState({ id: "", name: "" });
-  console.log("hello is nis", initialData);
+
   const [classData, setClassData] = useState({
     name: "",
     code: "",
@@ -103,7 +103,6 @@ const CreateClassForm = ({
           },
           teacher: {
             teacherId: selectedTeacher.id,
-            teacherName: selectedTeacher.name,
           },
 
           ...classData,

@@ -57,7 +57,7 @@ const Index = ({ batch, group }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState(initialErrors);
 
-  console.log("this si mat", formData.batch, getName);
+  console.log("this si mat", formData.batch, getName, formData.group);
 
   const resetForm = () => {
     setFormData(initialFormData);
@@ -144,6 +144,17 @@ const Index = ({ batch, group }) => {
       )}${paddedRandomDigits}`;
       setPassword(generatedUsername);
       setUsername(generatedUsername);
+    }
+
+    // Add the following code to update the batch and group values in formData
+    if (name === "batch") {
+      const selectedBatch = batch.find((item) => item._id === value);
+      setGetName(selectedBatch?.batchName || "");
+    }
+
+    if (name === "group") {
+      const selectedGroup = group.find((item) => item._id === value);
+      setGroupName(selectedGroup?.name || "");
     }
   };
 

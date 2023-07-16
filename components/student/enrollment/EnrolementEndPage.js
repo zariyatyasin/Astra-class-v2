@@ -2,7 +2,6 @@ import Link from "next/link";
 import React from "react";
 
 const EnrolementEndPage = ({ accessEnrollment }) => {
-  console.log("meow", accessEnrollment);
   return (
     <div>
       <div className="h-screen pt-16 pb-12 flex flex-col  ">

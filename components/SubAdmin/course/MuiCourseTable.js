@@ -10,7 +10,6 @@ export default function EnrollmentTable({ data, faculties, setData }) {
   const [formData, setFormData] = useState(null);
 
   const handleDelete = async () => {
-    console.log(selectedRow?._id);
     try {
       const { data } = await axios.delete(`/api/subadmin/course`, {
         courseId: "64a2cddbec31ff1658ffd0ac",

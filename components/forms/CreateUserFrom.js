@@ -10,7 +10,6 @@ const UserForm = () => {
     event.preventDefault();
 
     // Perform form submission or API call to register the new user
-    console.log("Form submitted:", { username, name, email, role });
 
     // Reset form fields
     setUsername("");
