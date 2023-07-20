@@ -1,56 +1,67 @@
+// index.js
+import React, { useState } from "react";
 import TeacherLayout from "@/components/layout/TeacherLayout";
-import { connectDb, disconnectDb } from "@/utils/db";
-import Class from "@/model/Class";
-import Student from "@/model/Student";
-import User from "@/model/User";
-import React from "react";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import Homework from "@/components/homework/HomeWork";
 
-const index = ({ classObj, users }) => {
-  console.log(users);
+const CustomTabPanel = (props) => {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box>
+          <div>{children}</div>
+        </Box>
+      )}
+    </div>
+  );
+};
+
+const Index = ({ classObj, users }) => {
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   return (
     <TeacherLayout>
-      <div className="px-4 sm:px-6 lg:px-8 ">index</div>
+      <div className="px-4 sm:px-6 lg:px-8">
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab label="Overview" />
+              <Tab label="Homework" />
+              <Tab label="Class Post" />
+            </Tabs>
+          </Box>
+          <CustomTabPanel value={value} index={0}>
+            overview
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
+            <Homework />
+          </CustomTabPanel>
+
+          <CustomTabPanel value={value} index={2}>
+            Item Three
+          </CustomTabPanel>
+        </Box>
+      </div>
     </TeacherLayout>
   );
 };
 
-export default index;
-
-export async function getServerSideProps(context) {
-  try {
-    await connectDb();
-
-    const { id } = context.query;
-    console.log(id);
-    const classObj = await Class.findOne({
-      _id: id,
-    }).lean();
-
-    // Get the student details for each studentId
-    // const students = await Student.find({
-    //   studentId: { $in: classObj.students.map((student) => student.studentId) },
-    // }).lean();
-    const users = await User.find({
-      _id: { $in: classObj.students.map((student) => student.studentId) },
-    }).lean();
-
-    await disconnectDb();
-
-    // Add the students array to the classObj
-
-    return {
-      props: {
-        classObj: JSON.parse(JSON.stringify(classObj)),
-        users: JSON.parse(JSON.stringify(users)),
-      },
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      props: {
-        classObj: null,
-        students: [], // Add an empty students array to avoid potential issues
-      },
-    };
-  }
-}
+export default Index;

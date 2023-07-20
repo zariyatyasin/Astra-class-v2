@@ -6,12 +6,17 @@ import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { useRouter } from "next/router";
 import { IconButton } from "@mui/material";
-import CreateBatchForm from "@/components/forms/CreateBatchForm";
 import { Button, Modal } from "@mui/material";
-export default function ReuableTable({ data, setData, columnConfig }) {
+
+export default function ReuableTable({
+  data,
+  setData,
+  columnConfig,
+  children,
+  onEdit,
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [selectedData, setSelectedData] = useState(null);
 
   const handleClose = () => {
     setOpen(false);
@@ -20,16 +25,16 @@ export default function ReuableTable({ data, setData, columnConfig }) {
   const handleModalClose = () => {
     handleClose();
   };
+
   const handleUpdate = (rowData) => {
-    setSelectedData(rowData);
     setOpen(true);
+    onEdit(rowData);
   };
 
   const handleDelete = async (id) => {
     try {
       const updatedData = data.filter((item) => item._id !== id);
       setData(updatedData);
-
       console.log(`Item with ID ${id} deleted successfully`);
     } catch (error) {
       console.error(`Error deleting item with ID ${id}`, error);
@@ -95,12 +100,7 @@ export default function ReuableTable({ data, setData, columnConfig }) {
             className="bg-white rounded-lg p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <CreateBatchForm
-              open={open}
-              setOpen={setOpen}
-              initialData={selectedData}
-              setData={setData}
-            />
+            {children}
           </div>
         </div>
       </Modal>

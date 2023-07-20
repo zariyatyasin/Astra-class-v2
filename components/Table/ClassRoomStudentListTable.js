@@ -10,7 +10,6 @@ const ClassRoomStudentListTable = ({ students, setStudents }) => {
   const [filterValue, setFilterValue] = useState("");
 
   if (!students) {
-    // Handle the case when students array is undefined
     return <div>Loading...</div>;
   }
 
@@ -27,10 +26,10 @@ const ClassRoomStudentListTable = ({ students, setStudents }) => {
         const router = useRouter();
         const { id } = router.query;
         const studentId = params.row.studentId;
-        const classId = id; // Specify the class ID to check
+        const classId = id;
 
         const [buttonText, setButtonText] = useState(params.value);
-        const [loading, setLoading] = useState(false); // Add loading state
+        const [loading, setLoading] = useState(false);
 
         const handleButtonClick = async () => {
           try {
@@ -41,7 +40,6 @@ const ClassRoomStudentListTable = ({ students, setStudents }) => {
               classId,
             });
 
-            // Remove the student from the students array
             setStudents((prevStudents) => {
               const updatedStudents = prevStudents.filter(
                 (student) => student._id !== studentId
@@ -56,7 +54,6 @@ const ClassRoomStudentListTable = ({ students, setStudents }) => {
           }
         };
         const handleViewClick = () => {
-          // Handle the view button click
           console.log("View student ID:", studentId);
         };
 
@@ -74,8 +71,8 @@ const ClassRoomStudentListTable = ({ students, setStudents }) => {
               variant="outlined"
               color={buttonText === "Add" ? "primary" : "secondary"}
               onClick={handleButtonClick}
-              disabled={loading} // Disable the button while loading
-              startIcon={loading && <CircularProgress size={20} />} // Show loading indicator
+              disabled={loading}
+              startIcon={loading && <CircularProgress size={20} />}
             >
               {loading ? "Loading..." : buttonText}
             </Button>
@@ -88,7 +85,7 @@ const ClassRoomStudentListTable = ({ students, setStudents }) => {
   const router = useRouter();
   const { id } = router.query;
   const rows = students.map((student, index) => {
-    const { _id } = student; // Assuming the student ID field is named '_id'
+    const { _id } = student;
 
     return {
       id: index + 1,
@@ -97,7 +94,7 @@ const ClassRoomStudentListTable = ({ students, setStudents }) => {
       groupName: student.group.groupName,
       batchName: student.batch.batchName,
       lastName: student.username,
-      joinedClasses: "Remove", // Always set to "Remove" since it represents the action of removing the student
+      joinedClasses: "Remove",
     };
   });
   const filteredRows = rows.filter((row) =>

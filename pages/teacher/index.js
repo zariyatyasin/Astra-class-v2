@@ -1,11 +1,8 @@
-import FeaturesCard from "@/components/cards/FeaturesCard";
 import TeacherLayout from "@/components/layout/TeacherLayout";
-import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
-import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
-import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
+
 import React, { useEffect } from "react";
 import Class from "../../model/Class";
-import { TeacherCard } from "@/components/cards/TeacherCard";
+
 import { TeacherClass } from "@/components/Teacher/TeacherClasses/TeacherClass";
 import { getSession, useSession } from "next-auth/react";
 import { connectDb, disconnectDb } from "@/utils/db";
@@ -29,7 +26,6 @@ export async function getServerSideProps(context) {
     await connectDb();
 
     const classes = await Class.find({ "teacher.teacherId": session.user._id })
-      .populate("teacher.teacherId")
       .sort({ updatedAt: -1 })
       .lean();
 

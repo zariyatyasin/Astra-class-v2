@@ -1,22 +1,17 @@
-import * as React from "react";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
+import TeacherLayout from "@/components/layout/TeacherLayout";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Class from "../../../model/Class";
-import ClassRoomHeader from "@/components/Teacher/classRooms/ClassRoomHeader";
 import Box from "@mui/material/Box";
-import TeacherLayout from "@/components/layout/TeacherLayout";
-import { connectDb, disconnectDb } from "@/utils/db";
-import { ObjectId } from "mongodb";
-import ClassStudentTable from "@/components/SubAdmin/createClass/ClassStudentTable";
-import User from "@/model/User";
-import Table from "@/components/Teacher/classRooms/TableStudent";
-import { useState } from "react";
-import { useRouter } from "next/router";
-import axios from "axios";
-import Attendance from "@/components/Teacher/attendance/Attendance";
-import EnrollCourse from "@/model/EnrollCourse";
-function TabPanel(props) {
+import Table from "../../../components/Table/Table";
+import Typography from "@mui/material/Typography";
+import { Container, Paper, Divider } from "@mui/material";
+import { Button, Modal } from "@mui/material";
+import HomeworkList from "@/components/homework/HomeList";
+import StudentHomeworkList from "@/components/homework/StudentHomeworkList";
+import HomeworkForm from "@/components/homework/HomeWorkForm";
+import EditHomeworkDialog from "@/components/homework/EditHomeWork";
+function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
@@ -35,168 +30,211 @@ function TabPanel(props) {
     </div>
   );
 }
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
+const Index = ({ classObj, users }) => {
+  const [homeworkList, setHomeworkList] = useState([]);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [data, setData] = useState(homeworkList);
+  const handleCreateHomework = (newHomework) => {
+    setHomeworkList([...homeworkList, { ...newHomework, completed: false }]);
   };
-}
 
-//main index
-const index = ({
-  classObj,
-  courseStudents,
-  addStudentInClass,
-  enrollcourses,
-}) => {
-  const [value, setValue] = useState(0);
-  const router = useRouter();
-  const { id } = router.query;
+  console.log(homeworkList);
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleDeleteHomework = (index) => {
+    const updatedHomeworkList = homeworkList.filter((_, i) => i !== index);
+    setHomeworkList(updatedHomeworkList);
+  };
+
+  const handleEditHomework = (index, updatedHomework) => {
+    const updatedHomeworkList = [...homeworkList];
+    updatedHomeworkList[index] = { ...updatedHomework, completed: false };
+    setHomeworkList(updatedHomeworkList);
+  };
+
+  const [value, setValue] = useState(0); // Change the initial value to 0
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const columnConfig = [
+    { field: "homework", headerName: "Homework", width: 200 },
+    { field: "deadline ", headerName: "Deadline", width: 200 },
 
-  console.log("enrollment", classObj.course[0]);
-
-  const [students, setStudents] = useState(courseStudents);
-  const [loading, setLoading] = useState(false);
-  const [addedStudents, setAddedStudents] = useState(addStudentInClass);
-
-  const handleRemoveStudent = async (studentToRemove) => {
-    setAddedStudents((prevAddedStudents) =>
-      prevAddedStudents.filter((student) => student._id !== studentToRemove._id)
-    );
-    setLoading(true); // set loading to true here
-
-    try {
-      const res = await axios.put(`/api/subadmin/createclass/${id}`, {
-        id: studentToRemove._id,
-        studentName: studentToRemove.name,
-        studentRoll: studentToRemove.rollNumber,
-      });
-      setLoading(false); // set loading to false here
-    } catch (error) {
-      setLoading(false); // set loading to false here as well
-      console.error(error);
-    }
-  };
-
-  const notAddedStudents = students?.filter((student) => {
-    return !addedStudents.find(
-      (addedStudent) => addedStudent._id === student._id
-    );
-  });
-
-  const [modelOpen, setModelOpen] = useState(false);
+    { field: "priority", headerName: "Priority", width: 120 },
+    { field: "actions", headerName: "Actions", width: 300 },
+  ];
   return (
     <TeacherLayout>
-      {loading && <div>Loading...</div>}
-      <ClassRoomHeader
-        setAddedStudents={setAddedStudents}
-        setModelOpen={setModelOpen}
-        modelOpen={modelOpen}
-        classObj={classObj}
-        students={students}
-        onRemoveStudent={handleRemoveStudent}
-        notAddedStudents={notAddedStudents}
-      />
-      <div>
-        <Box
-          sx={{ width: "100%" }}
-          className="   h-screen px-4 sm:px-6 lg:px-8 "
-        >
-          <Box
-            sx={{ borderBottom: 1, borderColor: "divider" }}
-            className="bg-white rounded-t-lg shadow "
-          >
+      <div className="px-4 sm:px-6 lg:px-8">
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <Tabs
               value={value}
               onChange={handleChange}
               aria-label="basic tabs example"
             >
-              <Tab label="Students" {...a11yProps(0)} />
-              <Tab label="Attendance" {...a11yProps(1)} />
-              <Tab label="Exam" {...a11yProps(2)} />
-              <Tab label="Post" {...a11yProps(3)} />
+              <Tab label="Overview" />
+              <Tab label="Homework" />
+              <Tab label="Class Post" />
             </Tabs>
           </Box>
-          <TabPanel value={value} index={0}>
-            {/* <ClassStudentTable
-              studentList={classObj.students}
-              itemsPerPage={10}
-            /> */}
-            <Table
-              students={addedStudents}
-              onRemoveStudent={handleRemoveStudent}
-            />{" "}
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <Attendance
-              addedStudents={addedStudents}
-              courseId={classObj.course[0]}
-            />
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            Exam
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            Post
-          </TabPanel>
+          <CustomTabPanel value={value} index={0}>
+            overive
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
+            <Paper elevation={3} style={{ padding: "20px", marginTop: "20px" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenModal}
+                style={{ marginBottom: "20px" }}
+              >
+                Add Homework
+              </Button>
+
+              <Typography variant="h4" gutterBottom>
+                Homework
+              </Typography>
+
+              <Divider style={{ margin: "20px 0" }} />
+
+              <Table
+                columnConfig={columnConfig}
+                data={homeworkList}
+                setData={setHomeworkList}
+              >
+                <EditHomeworkDialog />
+              </Table>
+
+              {/* {homeworkList.length > 0 ? (
+                <HomeworkList
+                  totalStudents={30}
+                  homeworkList={homeworkList}
+                  completedHomeworkCount={3}
+                  studentsNotCompleted={10}
+                  onDelete={handleDeleteHomework}
+                  onEdit={handleEditHomework}
+                />
+              ) : (
+                <Typography variant="body1">No homework tasks yet.</Typography>
+              )} */}
+            </Paper>
+            <Modal open={isModalOpen} onClose={handleCloseModal}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 4,
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  Add Homework
+                </Typography>
+                <HomeworkForm
+                  onSubmit={handleCreateHomework}
+                  setModalOpen={setModalOpen}
+                />
+              </Box>
+            </Modal>
+          </CustomTabPanel>
+
+          <CustomTabPanel value={value} index={2}>
+            Item Three
+          </CustomTabPanel>
         </Box>
       </div>
     </TeacherLayout>
   );
 };
 
-export default index;
-export async function getServerSideProps(context) {
-  try {
-    await connectDb();
+export default Index;
 
-    const classId = context.query.id;
-    const classObjId = new ObjectId(classId);
 
-    const classObj = await Class.findOne({
-      _id: classObjId,
-    }).lean();
 
-    const courseStudents = await User.find({
-      courses: {
-        $elemMatch: {
-          courseeId: classObj.course,
-        },
-      },
-    }).lean();
 
-    const addStudentInClass = await User.find({
-      class: classObjId,
-    }).lean();
-    const enrollcourses = await EnrollCourse.find({})
-      .sort({ updatedAt: -1 })
-      .lean();
-    await disconnectDb();
 
-    return {
-      props: {
-        classObj: JSON.parse(JSON.stringify(classObj)),
-        courseStudents: JSON.parse(JSON.stringify(courseStudents)),
-        addStudentInClass: JSON.parse(JSON.stringify(addStudentInClass)),
-        enrollcourses: JSON.parse(JSON.stringify(enrollcourses)),
-      },
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      props: {
-        classObj: null,
-      },
-    };
+// src/components/EditHomeworkDialog.js
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+} from "@mui/material";
+
+const EditHomeworkDialog = ({
+  isOpen,
+  handleClose,
+  initialHomework,
+  onSave,
+}) => {
+  const [homework, setHomework] = useState(initialHomework);
+  console.log("helo");
+  useEffect(() => {
+    setHomework(initialHomework);
+  }, [initialHomework]);
+
+  const handleHomeworkChange = (e) => {
+    setHomework({ ...homework, homework: e.target.value });
+  };
+
+  const handleDeadlineChange = (e) => {
+    setHomework({ ...homework, deadline: e.target.value });
+  };
+
+  const handleSave = () => {
+    onSave(homework);
+    handleClose();
+  };
+
+  if (!isOpen) {
+    return null;
   }
-}
+
+  return (
+    <Dialog open={isOpen} onClose={handleClose}>
+      <DialogTitle>Edit Homework</DialogTitle>
+      <DialogContent>
+        <TextField
+          label="Homework"
+          fullWidth
+          value={homework?.homework || ""}
+          onChange={handleHomeworkChange}
+        />
+        <TextField
+          label="Deadline"
+          type="datetime-local"
+          fullWidth
+          value={homework?.deadline || ""}
+          onChange={handleDeadlineChange}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleSave} color="primary">
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default EditHomeworkDialog;
