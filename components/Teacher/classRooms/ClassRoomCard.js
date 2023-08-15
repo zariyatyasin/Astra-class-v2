@@ -45,7 +45,7 @@ export const ClassRoomCard = ({
             <span className="text-gray-500">{section} Section</span>
           </div>
           <Link
-            href={`/teacher/classroom/?id=${classId}`}
+            href={`/teacher/classroom/${classId}`}
             className="flex items-center justify-center text-xs font-medium rounded-full px-4 py-1 space-x-1 border-2 border-black bg-white"
           >
             <span>View</span>

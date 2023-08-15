@@ -6,17 +6,10 @@ import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { useRouter } from "next/router";
 import { IconButton } from "@mui/material";
-import { LinearProgress } from "@mui/material";
-
-import { Modal } from "@mui/material";
-
-export default function Table({
-  data,
-  setData,
-  columnConfig,
-  EditComponent,
-  percentageHomeWorkDone,
-}) {
+import CreateBatchForm from "@/components/forms/CreateBatchForm";
+import { Button, Modal } from "@mui/material";
+import EditHomeWork from "../Teacher/homework/EditHomeWork";
+export default function Table({ data, setData, columnConfig, EditComponent }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
@@ -70,33 +63,10 @@ export default function Table({
       </IconButton>
     </div>
   );
-  const getColor = (value) => {
-    if (value >= 90) return "green";
-    if (value >= 50) return "orange";
-    return "red";
-  };
 
   const columns = columnConfig.map((column) => ({
     ...column,
-    renderCell:
-      column.field === "process"
-        ? (params) => (
-            <div style={{ width: "100%" }}>
-              <LinearProgress
-                variant="determinate"
-                value={percentageHomeWorkDone}
-                sx={{
-                  width: "100%",
-                  "& .MuiLinearProgress-bar": {
-                    backgroundColor: getColor(percentageHomeWorkDone),
-                  },
-                }}
-              />
-            </div>
-          )
-        : column.field === "actions"
-        ? renderActionsCell
-        : undefined,
+    renderCell: column.field === "actions" ? renderActionsCell : undefined,
   }));
 
   const rows = data?.map((data, index) => ({
@@ -126,7 +96,7 @@ export default function Table({
             className="bg-white rounded-lg p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <EditComponent
+            <EditHomeWork
               open={open}
               setOpen={setOpen}
               initialData={selectedData}
